@@ -12,9 +12,7 @@
 <p>When I first learned to make websites I remember thinking how easy it was. How I had looked at these sites for so long, amazed at the skill. And then after taking a 1 hour html online class realized I could do the same. Then later, it all came crashing down when I learned that if you want your website to accept payments...... you needed to be smart. Money on the internet is difficult, it wasn't made with that in mind. Bitcoin was built just for that need. And I think the old website model will change as well, as we learn we no longer need these complicated checkout carts. </p>
 
 <p>Donate: 18WcknETBsjEB5JfdXipyExrjKkjP8N6XG</p>
-
-
-
+<br>
 RPC commands.
 
     lmx_active              program active or not returns error or 1
@@ -41,7 +39,7 @@ RPC commands.
 
 
 
-
+<br>
 Database Structure.
 
 	[[buyer_address_1]]
