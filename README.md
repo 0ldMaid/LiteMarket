@@ -44,86 +44,86 @@ RPC commands.
 
 Database Structure.
 
-	carbon_buy[0][0] = new String("[[buyer_address_1]]");
-	carbon_buy[1][0] = new String("[[buyer_address_2]]");
-	carbon_buy[2][0] = new String("[[buyer_address_city]]");
-	carbon_buy[3][0] = new String("[[buyer_address_state]]");
-	carbon_buy[4][0] = new String("[[buyer_address_zip]]");
-	carbon_buy[5][0] = new String("[[buyer_address_country]]");
-	carbon_buy[6][0] = new String("[[buyer_id]]");
-	carbon_buy[7][0] = new String("[[buyer_ip]]");
-	carbon_buy[8][0] = new String("[[buyers_email]]");
-	carbon_buy[9][0] = new String("[[buyers_first_name]]");
-	carbon_buy[10][0] = new String("[[buyers_last_name]]");
-	carbon_buy[11][0] = new String("[[buyers_payment_address]]");
-	carbon_buy[12][0] = new String("[[buyers_phone]]");
-	carbon_buy[13][0] = new String("[[currency]]");
-	carbon_buy[14][0] = new String("[[custom_template]]");
-	carbon_buy[15][0] = new String("[[custom_1]]");
-	carbon_buy[16][0] = new String("[[custom_2]]");
-	carbon_buy[17][0] = new String("[[custom_3]]");
-	carbon_buy[18][0] = new String("[[item_errors]]");
-	carbon_buy[19][0] = new String("[[item_date_listed]]");
-	carbon_buy[20][0] = new String("[[item_date_listed_day]]");
-	carbon_buy[21][0] = new String("[[item_date_listed_int]]");
-	carbon_buy[22][0] = new String("[[item_hits]]");
-	carbon_buy[23][0] = new String("[[item_confirm_code]]");
-	carbon_buy[24][0] = new String("[[item_confirmed]]");
-	carbon_buy[25][0] = new String("[[item_cost]]");
-	carbon_buy[26][0] = new String("[[item_description]]");
-	carbon_buy[27][0] = new String("[[item_id]]");
-	carbon_buy[28][0] = new String("[[item_price]]");
-	carbon_buy[29][0] = new String("[[item_weight]]");
-	carbon_buy[30][0] = new String("[[item_listing_id]]");
-	carbon_buy[31][0] = new String("[[item_notes]]");
-	carbon_buy[32][0] = new String("[[item_package_d]]");
-	carbon_buy[33][0] = new String("[[item_package_l]]");
-	carbon_buy[34][0] = new String("[[item_package_w]]");
-	carbon_buy[35][0] = new String("[[item_part_number]]");
-	carbon_buy[36][0] = new String("[[item_title]]");
-	carbon_buy[37][0] = new String("[[item_title_url]]");
-	carbon_buy[38][0] = new String("[[item_type]]");
-	carbon_buy[39][0] = new String("[[item_search_1]]");
-	carbon_buy[40][0] = new String("[[item_search_2]]");
-	carbon_buy[41][0] = new String("[[item_search_3]]");
-	carbon_buy[42][0] = new String("[[item_site_id]]");
-	carbon_buy[43][0] = new String("[[item_site_url]]");
-	carbon_buy[44][0] = new String("[[item_picture_1]]");
-	carbon_buy[45][0] = new String("[[item_total_on_hand]]");
-	carbon_buy[46][0] = new String("[[sale_date_payment_received]]");
-	carbon_buy[47][0] = new String("[[sale_date_shipped]]");
-	carbon_buy[48][0] = new String("[[sale_date_sold]]");
-	carbon_buy[49][0] = new String("[[sale_final_value_fee]]");
-	carbon_buy[50][0] = new String("[[sale_handling]]");
-	carbon_buy[51][0] = new String("[[sale_payment_address]]");
-	carbon_buy[52][0] = new String("[[sale_payment_type]]");
-	carbon_buy[53][0] = new String("[[sale_fees]]");
-	carbon_buy[54][0] = new String("[[sale_quantity_sold]]");
-	carbon_buy[55][0] = new String("[[sale_id]]");
-	carbon_buy[56][0] = new String("[[sale_seller_id]]");
-	carbon_buy[57][0] = new String("[[sale_status]]");
-	carbon_buy[58][0] = new String("[[sale_tax]]");
-	carbon_buy[59][0] = new String("[[sale_shipping_company]]");
-	carbon_buy[60][0] = new String("[[sale_shipping_in]]");
-	carbon_buy[61][0] = new String("[[sale_shipping_out]]");
-	carbon_buy[62][0] = new String("[[sale_source_of_sale]]");
-	carbon_buy[63][0] = new String("[[sale_total_sale_amount]]");
-	carbon_buy[64][0] = new String("[[sale_tracking_number]]");
-	carbon_buy[65][0] = new String("[[sale_transaction_id]]");
-	carbon_buy[66][0] = new String("[[sale_transaction_info]]");
-	carbon_buy[67][0] = new String("[[seller_address_1]]");
-	carbon_buy[68][0] = new String("[[seller_address_2]]");
-	carbon_buy[69][0] = new String("[[seller_address_city]]");
-	carbon_buy[70][0] = new String("[[seller_address_state]]");
-	carbon_buy[71][0] = new String("[[seller_address_zip]]");
-	carbon_buy[72][0] = new String("[[seller_address_country]]");
-	carbon_buy[73][0] = new String("[[seller_id]]");
-	carbon_buy[74][0] = new String("[[seller_ip]]");
-	carbon_buy[75][0] = new String("[[seller_email]]");
-	carbon_buy[76][0] = new String("[[seller_first_name]]");
-	carbon_buy[77][0] = new String("[[seller_last_name]]");
-	carbon_buy[78][0] = new String("[[seller_notes]]");
-	carbon_buy[79][0] = new String("[[seller_phone]]");
-	carbon_buy[80][0] = new String("[[seller_logo]]");
-	carbon_buy[81][0] = new String("[[seller_url]]");
+	[[buyer_address_1]]
+	[[buyer_address_2]]
+	[[buyer_address_city]]
+	[[buyer_address_state]]
+	[[buyer_address_zip]]
+	[[buyer_address_country]]
+	[[buyer_id]]
+	[[buyer_ip]]
+	[[buyers_email]]
+	[[buyers_first_name]]
+	[[buyers_last_name]]
+	[[buyers_payment_address]]
+	[[buyers_phone]]
+	[[currency]]
+	[[custom_template]]
+	[[custom_1]]
+	[[custom_2]]
+	[[custom_3]]
+	[[item_errors]]
+	[[item_date_listed]]
+	[[item_date_listed_day]]
+	[[item_date_listed_int]]
+	[[item_hits]]
+	[[item_confirm_code]]
+	[[item_confirmed]]
+	[[item_cost]]
+	[[item_description]]
+	[[item_id]]
+	[[item_price]]
+	[[item_weight]]
+	[[item_listing_id]]
+	[[item_notes]]
+	[[item_package_d]]
+	[[item_package_l]]
+	[[item_package_w]]
+	[[item_part_number]]
+	[[item_title]]
+	[[item_title_url]]
+	[[item_type]]
+	[[item_search_1]]
+	[[item_search_2]]
+	[[item_search_3]]
+	[[item_site_id]]
+	[[item_site_url]]
+	[[item_picture_1]]
+	[[item_total_on_hand]]
+	[[sale_date_payment_received]]
+	[[sale_date_shipped]]
+	[[sale_date_sold]]
+	[[sale_final_value_fee]]
+	[[sale_handling]]
+	[[sale_payment_address]]
+	[[sale_payment_type]]
+	[[sale_fees]]
+	[[sale_quantity_sold]]
+	[[sale_id]]
+	[[sale_seller_id]]
+	[[sale_status]]
+	[[sale_tax]]
+	[[sale_shipping_company]]
+	[[sale_shipping_in]]
+	[[sale_shipping_out]]
+	[[sale_source_of_sale]]
+	[[sale_total_sale_amount]]
+	[[sale_tracking_number]]
+	[[sale_transaction_id]]
+	[[sale_transaction_info]]
+	[[seller_address_1]]
+	[[seller_address_2]]
+	[[seller_address_city]]
+	[[seller_address_state]]
+	[[seller_address_zip]]
+	[[seller_address_country]]
+	[[seller_id]]
+	[[seller_ip]]
+	[[seller_email]]
+	[[seller_first_name]]
+	[[seller_last_name]]
+	[[seller_notes]]
+	[[seller_phone]]
+	[[seller_logo]]
+	[[seller_url]]
 
