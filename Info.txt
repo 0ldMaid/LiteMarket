@@ -1,0 +1,4 @@
+LiteMarket v1.1.2.3
+23-Jun-2014
+Currency BTC
+Java jdk1.7.0_45
