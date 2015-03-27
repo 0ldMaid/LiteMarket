@@ -181,6 +181,16 @@ System.out.println("Created table purchase");
 }//****************************************************************
 
 
+try{s.execute("drop table blocked_db");}catch (SQLException se){System.out.println("DB does not Exist0."); ix0 = 1;}
+try{s.execute("drop table blocked_db");}catch (SQLException se){System.out.println("DB does not Exist1."); ix0 = 1;}
+
+// We create a table...
+if(ix0 == 1){//******************************************************
+
+	s.execute("create table blocked_db(blocked_address varchar(100))"); 
+System.out.println("Created table blocked ip");
+
+}//****************************************************************
 
 
 
@@ -559,6 +569,44 @@ System.out.println("Created table purchase");
 	}//*******************************************************************************
 
 	ps.close();
+
+
+
+
+
+
+
+
+
+         //and add a few rows...
+
+	ps = null;
+
+	
+
+	ps = conn.prepareStatement("insert into blocked_db(blocked_address) values (?)");
+
+	numrows = 0;
+
+
+
+	for(int loop1 = 0; loop1 < lm.carbon_blockip.length; loop1++){//********************
+
+
+	    System.out.println(lm.carbon_blockip[loop1]);
+            ps.setString(1,lm.carbon_blockip[loop1]);
+
+
+	numrows = numrows + ps.executeUpdate();
+
+
+	}//*******************************************************************************
+
+	ps.close();
+
+
+
+
 
 
 

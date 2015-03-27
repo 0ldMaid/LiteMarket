@@ -1,3 +1,5 @@
+import java.math.*;
+
 import java.io.*;
 import javax.swing.*;
 import java.awt.*;
@@ -354,21 +356,13 @@ System.out.println("5");
 	System.out.println(xamount);
 
 
+	BigDecimal amount = new BigDecimal(xamount);  
+        BigDecimal size = new BigDecimal("100000000");   
+        System.out.println(amount.divide(size));
 
-	String wallet_value_s = xamount;
+	BigDecimal balance_x = amount.divide(size);  
 
-	if(wallet_value_s.length() == 1){wallet_value_s = "0.0000000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 2){wallet_value_s = "0.000000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 3){wallet_value_s = "0.00000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 4){wallet_value_s = "0.0000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 5){wallet_value_s = "0.000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 6){wallet_value_s = "0.00" + wallet_value_s;}
-	else if(wallet_value_s.length() == 7){wallet_value_s = "0.0" + wallet_value_s;}
-	else if(wallet_value_s.length() == 8){wallet_value_s = "0." + wallet_value_s;}
-
-	if(xamount.length() >= 9){wallet_value_s = wallet_value_s.substring(0, wallet_value_s.length() -8) + "." + wallet_value_s.substring(wallet_value_s.length() -8, wallet_value_s.length());}
-
-
+	String wallet_value_s = balance_x.toString();
 
 	String xamount2 = wallet_value_s;
 

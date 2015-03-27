@@ -1,3 +1,5 @@
+import java.math.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -102,21 +104,19 @@ private JSONObject invokeRPC(String id, String method, List<String> params) {
 			System.out.println("x" + result + "x");
 
 
-			int xx3x = result.indexOf(".");
-			int xx4x = result.length() - (xx3x + 1);
 
-			if(xx4x == 1){result = result + "0000000";}
-			else if(xx4x == 2){result = result + "000000";}
-			else if(xx4x == 3){result = result + "00000";}
-			else if(xx4x == 4){result = result + "0000";}
-			else if(xx4x == 5){result = result + "000";}
-			else if(xx4x == 6){result = result + "00";}
-			else if(xx4x == 7){result = result + "0";}
-			else if(xx4x == 8){result = result + "";}
 
-			result = result.replace(".", "");
+			BigDecimal amount = new BigDecimal(result);  
+       		 	BigDecimal size = new BigDecimal("100000000");   
+        		System.out.println(amount.multiply(size));
 
-			lm.wallet_value = (Long) Long.parseLong(result);
+			BigDecimal balance_x = amount.multiply(size);  
+
+			String wallet_value_s = balance_x.toString();
+
+			String xamount2 = wallet_value_s;
+
+			lm.wallet_value = (Long) Long.parseLong(xamount2);
 
 
 		} catch (ClientProtocolException e) {

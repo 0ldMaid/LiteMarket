@@ -31,7 +31,8 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONValue;
 
-
+import java.net.HttpURLConnection;
+import javax.net.SocketFactory;
 
 
 
@@ -101,18 +102,43 @@ System.out.println(jsonText);
 try{
 
 String sentence;   
-String modifiedSentence;   
+String modifiedSentence = new String(""); 
 
-BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in) );
-Socket clientSocket = new Socket(lm.httpx, lm.server_port);   
-DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));    
-sentence = jsonText;  
-outToServer.writeBytes(sentence + '\n');   
-modifiedSentence = inFromServer.readLine();   
-System.out.println("FROM SERVER: " + modifiedSentence);
-clientSocket.close();
+System.out.println("go");
 
+	try{
+
+		System.out.println("socket");
+
+		SocketFactory factory = lm.tor.getSocketFactory();
+
+   		Socket socket = factory.createSocket(lm.httpx, 80);
+
+		System.out.println("socketg");
+
+    		OutputStream outputStream = socket.getOutputStream();
+    		PrintWriter outx = new PrintWriter(outputStream);
+    		outx.print(jsonText + "\r\n\r\n");
+    		outx.flush();
+    		InputStream inputStream = socket.getInputStream();
+    		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+    		BufferedReader in = new BufferedReader(inputStreamReader);
+
+		System.out.println("socketw");
+
+    		String line;
+    		while ((line = in.readLine()) != null) {
+
+    		  System.out.println(line);
+		  modifiedSentence = line;
+
+    		}//*************************************
+
+   		outx.close();
+    		in.close();
+    		socket.close();
+
+	}catch(Exception e){e.printStackTrace();}
 
 
 
@@ -153,7 +179,7 @@ clientSocket.close();
 		lm.carbon_buy = bufferarray;
 
 		}//if_size************
-		else{JOptionPane.showMessageDialog(null, "Request returned 0 results.");}
+		else{JOptionPane.showMessageDialog(null, "Request returned 0 results");}
 
 
 	}//try

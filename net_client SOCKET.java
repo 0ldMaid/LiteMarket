@@ -76,73 +76,42 @@ public void request_status(){//*************************************************
 String jsonText = new String("");
 
 
-try{//***********************************************
+try{
 
-	JSONObject obj = new JSONObject();
-	obj.put(lm.program_id, "connect");
-	obj.put("password", lm.passx);
+JSONObject obj = new JSONObject();
+obj.put(lm.program_id, "connect");
+obj.put("password", lm.passx);
 
-	StringWriter out = new StringWriter();
-	obj.writeJSONString(out);
-	jsonText = out.toString();
-	System.out.println(jsonText);
+StringWriter out = new StringWriter();
+obj.writeJSONString(out);
+jsonText = out.toString();
+System.out.println(jsonText);
 
 }catch(Exception e){System.out.println("JSON ERROR");}
 
 
 
 
-try{//***********************************************************************************************************************************
-
-
-
+try{
 
 String sentence;   
-String modifiedSentence = new String(""); 
+String modifiedSentence;   
 
+BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in) );
+System.out.println(">>> " + lm.httpx + " " + "80");
 
-System.out.println("go");
+//Socket clientSocket = new Socket(lm.httpx, lm.client_port);
 
-	try{
-
-		System.out.println("socket");
-
-		SocketFactory factory = lm.tor.getSocketFactory();
-
-   		Socket socket = factory.createSocket(lm.httpx, 80);
-		//socket.setSoTimeout(20000);
-
-		System.out.println("socketg");
-
-    		OutputStream outputStream = socket.getOutputStream();
-    		PrintWriter outx = new PrintWriter(outputStream);
-    		outx.print(jsonText + "\r\n\r\n");
-    		outx.flush();
-    		InputStream inputStream = socket.getInputStream();
-    		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-    		BufferedReader in = new BufferedReader(inputStreamReader);
-
-		System.out.println("socketw");
-
-    		String line;
-    		while ((line = in.readLine()) != null) {
-
-    		  System.out.println(line);
-		  modifiedSentence = line;
-
-    		}//*************************************
-
-   		outx.close();
-    		in.close();
-    		socket.close();
-
-	}catch(Exception e){e.printStackTrace();}
-
-
-
-
-
-
+	SocketFactory factory = lm.tor.getSocketFactory();
+   	Socket clientSocket = factory.createSocket(lm.httpx, 80);//lm.client_port
+ 
+DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));    
+sentence = jsonText;  
+outToServer.writeBytes(sentence + '\n');   
+modifiedSentence = inFromServer.readLine();   
+System.out.println("FROM SERVER: " + modifiedSentence);
+clientSocket.close();
 
 
     if(modifiedSentence.contains("Offline 400")){JOptionPane.showMessageDialog(null, "SERVER IS OFFLINE");}
@@ -195,5 +164,3 @@ System.out.println("go");
 
 
 }//last
-
-

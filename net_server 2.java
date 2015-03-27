@@ -35,7 +35,8 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONValue;
 
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 //import javax.servlet.http.HttpServletResponse;
@@ -53,7 +54,9 @@ public class net_server{
 Timer xtimerx;//class loop.
 Toolkit toolkit;
 
+private ExecutorService executorService = Executors.newFixedThreadPool(10);  
 
+ServerSocket serverSocket;
 
 
 
@@ -74,13 +77,6 @@ xtimerx.schedule(new RemindTask_server(), 0);
 
 
 
-
-
-
-
-
-
-
 class RemindTask_server extends TimerTask{
 Runtime rxrunti = Runtime.getRuntime();
 
@@ -89,9 +85,54 @@ public void run(){//************************************************************
 
 
 
+
+   while(true){//***
+
+	try{
+
+	    serverSocket = new ServerSocket(55555);
+	    final Socket socket = serverSocket.accept();
+            new Thread(new Runnable() {
+                public void run() {
+
+                    try{
+                        startServer(socket);
+                    }catch(Exception ex) {ex.printStackTrace();}
+
+                }//****************
+            }).start();
+
+	}catch(Exception e){
+
+		e.printStackTrace();
+        	System.err.println("Accept failed");
+        	//System.exit(1);
+
+    	}//******************
+
+   }//**********while
+
+
+
+}//runx***************************************************************************************************
+}//remindtask
+
+
+
+
+
+
+
+
+
+public void startServer(Socket socket){//************************************************************************************
+
+
+
+
 ServerSocket welcomeSocket;
 
-while(true){   
+
 
 
 
@@ -111,22 +152,12 @@ try{//*********************************************************
 
 
 
-	ServerSocket serverSocket = null;
-        try{
 
-             serverSocket = new ServerSocket(55555); 
-
-        }catch(IOException e) {
-
-             System.err.println("Could not listen on port: 55555.");
-             System.exit(1);
-
-        }//********************
 
         Socket clientSocket = null; 
         try{
 
-            clientSocket = serverSocket.accept();
+            clientSocket = socket;
             if(clientSocket != null){System.out.println("Connected");}
 
 	    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -815,13 +846,12 @@ catch(Exception e){System.out.println("Server ERROR");}
 
 
          
-}//**********while
 
 
 
 
-}//runx***************************************************************************************************
-}//remindtask
+}//runx**********************************************************************************************************************
+
 
 
 

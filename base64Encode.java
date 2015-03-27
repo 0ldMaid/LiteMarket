@@ -1,4 +1,4 @@
-public class base64Encode{
+public class Base64Encode{
 
   private final static char base64Array [] = {
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -13,7 +13,7 @@ public class base64Encode{
 
 
 
-  private static String base64Encode (String string)    {
+  private static String Base64Encode (String string)    {
     String encodedString = "";
     byte bytes [] = string.getBytes ();
     int i = 0;

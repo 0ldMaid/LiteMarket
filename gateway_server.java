@@ -42,12 +42,7 @@ import org.json.simple.JSONValue;
 
 
 
-
-
-
-
-
-public class net_server{
+public class gateway_server{
 
 
 Timer xtimerx;//class loop.
@@ -58,9 +53,9 @@ Toolkit toolkit;
 
 
 
-net_server(){//*****************************************************************
+gateway_server(){//*************************************************************
 
-System.out.println("Start Server");
+System.out.println("Start Gateway");
 
 toolkit = Toolkit.getDefaultToolkit();
 xtimerx = new Timer();
@@ -99,7 +94,7 @@ JSONObject jsonObject = new JSONObject();
 String SYSTEM_ERROR_MESSAGE = new String("");
 String jsonText = new String("");
 String responsex = new String("");
-String clientSentence = new String("");          
+String clientSentence;          
 String capitalizedSentence;          
 String passwordx = new String("");
 String client_ip = new String("");
@@ -110,62 +105,21 @@ try{//*********************************************************
 	InetAddress IP = InetAddress.getLocalHost();
 
 
+	//welcomeSocket = new ServerSocket(lm.gateway_port, 0, InetAddress.getByName("localhost"));
+	//welcomeSocket = new ServerSocket(lm.gateway_port); 
+	welcomeSocket = new ServerSocket(lm.gateway_port, 0, InetAddress.getByAddress(new byte[] {0x00,0x00,0x00,0x00}) );
+	//welcomeSocket = new ServerSocket(lm.gateway_port, 50, InetAddress.getByName("127.0.0.1"));//loopback        
+	//welcomeSocket = new ServerSocket(lm.gateway_port, 0, InetAddress.getByName("127.0.0.1"));//local
+	//welcomeSocket = new ServerSocket(lm.gateway_port, 50, InetAddress.getByName(IP.getHostAddress().toString()));//public 
 
-	ServerSocket serverSocket = null;
-        try{
-
-             serverSocket = new ServerSocket(55555); 
-
-        }catch(IOException e) {
-
-             System.err.println("Could not listen on port: 55555.");
-             System.exit(1);
-
-        }//********************
-
-        Socket clientSocket = null; 
-        try{
-
-            clientSocket = serverSocket.accept();
-            if(clientSocket != null){System.out.println("Connected");}
-
-	    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String inputLine;
-            while (!(inputLine = in.readLine()).equals("")){
-
-                System.out.println(inputLine);
-		clientSentence = inputLine;
-
-		if(inputLine.equals("\r") || inputLine.equals("\n")){System.out.println("BREAK>>>"); break;}
-		else{System.out.println("xx");}
-
-	    }//*****************************************
-            //in.close();
-
-	    System.out.println(">>>");
-
-	    client_ip = clientSocket.getRemoteSocketAddress().toString();
-	    System.out.println("CLIENT ADDRESS " + clientSocket.getRemoteSocketAddress().toString());
-
-        }catch (IOException e) {
-             System.err.println("Accept failed.");
-             System.exit(1);
-        }//*********************
-
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-
-
-        //out.println("HTTP/1.1 200 OK");
-        //out.println("Content-Type: text/html");
-        //out.println("\r\n");
-        //out.println("<p> Hello world </p>");
-
-
-
-
-
-
-
+	System.out.println("SERVER ADDRESS " + welcomeSocket.getLocalSocketAddress());
+	//welcomeSocket.setSoTimeout(60000); 
+	Socket connectionSocket = welcomeSocket.accept(); 
+	client_ip = connectionSocket.getRemoteSocketAddress().toString();
+	System.out.println("CLIENT ADDRESS " + connectionSocket.getRemoteSocketAddress().toString());
+	BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
+	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());             
+	clientSentence = inFromClient.readLine();
 
 
 
@@ -225,23 +179,17 @@ try{//*********************************************************
 		lm.ip_log[2][0] = request;
 
 
-
-
-
 //check for blocked ip
+	int BLOCKED = 0;
+	for(int xloop = 0; xloop < lm.carbon_blockip.length; xloop++){//************
 
-		int BLOCKED = 0;
-		for(int xloop = 0; xloop < lm.carbon_blockip.length; xloop++){//************
+	if(lm.carbon_blockip[xloop].equals(client_ip)){BLOCKED = 1;}
 
-		if(lm.carbon_blockip[xloop].equals(client_ip)){BLOCKED = 1;}
+	}//*************************************************************************
 
-		}//*************************************************************************
 
-		if(BLOCKED == 1){request = "blocked"; lm.ip_log[3][0] = "BLOCKED";}
-
+	if(BLOCKED == 1){request = "blocked"; lm.ip_log[3][0] = "BLOCKED";}
 //check for blocked ip
-
-
 
 
 
@@ -270,58 +218,13 @@ try{//*********************************************************
 				JSONObject sub_obj = new JSONObject();
 				sub_obj = new JSONObject(info22);
 
-				StringWriter outs = new StringWriter();
-				sub_obj.writeJSONString(outs);
-				jsonText = outs.toString();
+				StringWriter out = new StringWriter();
+				sub_obj.writeJSONString(out);
+				jsonText = out.toString();
 				System.out.println("SEND RESPONSE " + responsex);
 
 				System.out.println("SERVER GOT: " + clientSentence);             
 				capitalizedSentence = clientSentence.toUpperCase() + '\n';  
-
-				}catch(Exception e){System.out.println("Build Connect failed********************************************");}
-
-
-
-		}//***************************
-		else if(request.equals("bid")){
-		System.out.println("request bid");
-
-
-
-				responsex = "1"; 
-				lm.server_requests++;
-
-				System.out.println("bid_amount");
-
-				try{
-
-				Map<String, String> info22 = new HashMap<String, String>();
-
-				info22.put("response", responsex);
-
-				if(passwordx.equals(lm.carbon_settings[8]) ){
-
-					info22.put("inventory", Integer.toString(lm.items_for_sale_total));
-					info22.put("idx", lm.carbon_settings[7]);
-
-
-
-
-					JSONObject sub_obj = new JSONObject();
-					sub_obj = new JSONObject(info22);
-
-					StringWriter outs = new StringWriter();
-					sub_obj.writeJSONString(out);
-					jsonText = outs.toString();
-					System.out.println("SEND RESPONSE " + responsex);
-
-					System.out.println("SERVER GOT: " + clientSentence);
-					capitalizedSentence = clientSentence.toUpperCase() + '\n';
-
-
-				}//******************************************
-
-
 
 				}catch(Exception e){System.out.println("Build Connect failed********************************************");}
 
@@ -353,7 +256,7 @@ try{//*********************************************************
 				for(int xloop = 1; xloop < lm.carbon_sell[0].length; xloop++){//****************************************************
   					if(lm.carbon_sell[ Integer.parseInt(search_field) ][xloop].toLowerCase().contains(search_text.toLowerCase()) && lm.carbon_sell[lm.seller_id_xx][xloop].length() > 26){
 
-						if(Integer.parseInt(lm.carbon_sell[lm.item_total_on_hand_xx][xloop]) > 0){
+						if(Integer.parseInt(lm.carbon_sell[lm.item_total_on_hand_xx][xloop]) > 1){
 
 							list.add(lm.carbon_sell[lm.item_id_xx][xloop]); 
 		
@@ -372,7 +275,7 @@ try{//*********************************************************
   					if(lm.carbon_sell[ Integer.parseInt(search_field) ][xloop].toLowerCase().contains(search_text.toLowerCase()) && lm.carbon_sell[lm.seller_id_xx][xloop].length() > 26){
 						if(!lm.carbon_sell[lm.item_listing_id_xx][xloop].equals("HIDDEN")){
 				
-			   			if(Integer.parseInt(lm.carbon_sell[lm.item_total_on_hand_xx][xloop]) > 0){//******
+			   			if(Integer.parseInt(lm.carbon_sell[lm.item_total_on_hand_xx][xloop]) > 1){//******
 
 							list.add(lm.carbon_sell[lm.item_id_xx][xloop]);
 
@@ -392,9 +295,9 @@ try{//*********************************************************
   				jsonText = JSONValue.toJSONString(list);
   				System.out.print(jsonText);
 
-				//StringWriter outs = new StringWriter();
+				//StringWriter out = new StringWriter();
 				//obj.writeJSONString(out);
-				//jsonText = outs.toString();
+				//jsonText = out.toString();
 				System.out.println("SEND RESPONSE " + responsex);
 
 				System.out.println("SERVER GOT: " + clientSentence);             
@@ -483,9 +386,9 @@ try{//*********************************************************
 			JSONObject sub_obj = new JSONObject();
 			sub_obj = new JSONObject(mapx);
 
-			StringWriter outs = new StringWriter();
+			StringWriter out = new StringWriter();
 			sub_obj.writeJSONString(out);
-			jsonText = outs.toString();
+			jsonText = out.toString();
 			System.out.println("SEND RESPONSE " + responsex);
 
 			System.out.println("SERVER GOT: " + clientSentence);             
@@ -766,9 +669,9 @@ try{//*********************************************************
 	JSONObject sub_obj = new JSONObject();
 	sub_obj = new JSONObject(info65);
 
-	StringWriter outs = new StringWriter();
+	StringWriter out = new StringWriter();
 	sub_obj.writeJSONString(out);
-	jsonText = outs.toString();
+	jsonText = out.toString();
 	System.out.println("SEND RESPONSE " + responsex);
 
 	System.out.println("SERVER GOT: " + clientSentence);             
@@ -789,23 +692,18 @@ try{//*********************************************************
 
 
 }//try
-catch(ParseException e){e.printStackTrace(); responsex = "-1"; out.print("Error 500" + '\n');}
-catch(Exception e){out.print("Error 501" + '\n');}
+catch(ParseException e){e.printStackTrace(); responsex = "-1"; outToClient.writeBytes("Error 500" + '\n');}
+catch(Exception e){outToClient.writeBytes("Error 501" + '\n');}
 
 
-	//out.print(jsonText + '\n');
+	//outToClient.writeBytes(jsonText + '\n');
 
-	if(lm.serverx_active == 1 && responsex.equals("0")){out.print(SYSTEM_ERROR_MESSAGE + '\n');}
-	else if(lm.serverx_active == 1 && responsex.equals("1")){out.print(jsonText + '\n');}
-	else{out.print("Offline 400" + '\n');}
+	if(lm.serverx_active == 1 && responsex.equals("0")){outToClient.writeBytes(SYSTEM_ERROR_MESSAGE + '\n');}
+	else if(lm.serverx_active == 1 && responsex.equals("1")){outToClient.writeBytes(jsonText + '\n');}
+	else{outToClient.writeBytes("Offline 400" + '\n');}
 
 
-        out.flush();
-	//welcomeSocket.close();
-        out.close();
-
-        clientSocket.close();
-        serverSocket.close();
+	welcomeSocket.close();
 
 }//try
 catch(Exception e){System.out.println("Server ERROR");}
@@ -828,7 +726,7 @@ catch(Exception e){System.out.println("Server ERROR");}
 
 
 
-
+//removed items
 
 
 

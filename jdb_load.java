@@ -286,17 +286,10 @@ fl1.setVgap(0);
 	    ix0 = rowCount;
             //System.out.println(ix0);
 
-
-//34594
-
 	    ssp = new String[100];
 	    lm.carbon_settings = ssp;
 
             rs = s.executeQuery("SELECT value, align FROM settings ORDER BY align");
-
-
-
-
 
 	    ix0 = 0;
 	    while(rs.next()){
@@ -311,6 +304,48 @@ fl1.setVgap(0);
 
 	    }//while
 
+
+
+
+
+
+
+
+
+
+
+	    infox2.setText(spacer_0 + "Build Blocked List: ");
+
+	    stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+	    resultSet = stmt.executeQuery("SELECT * FROM blocked_db");
+
+	    resultSet.last();
+	    rowCount = resultSet.getRow();
+
+	    infox2.setText(spacer_0 + "Build Blocked List: " + Integer.toString(rowCount));
+
+
+	    ix0 = rowCount;
+            //System.out.println(ix0);
+
+	    ssp = new String[ix0];
+	    lm.carbon_blockip = ssp;
+
+            rs = s.executeQuery("SELECT blocked_address FROM blocked_db ORDER BY blocked_address");
+
+	    ix0 = 0;
+	    while(rs.next()){
+
+	    infox2.setText(spacer_0 + "Load IP LIST: (" + Integer.toString((ix0 + 1)) + " of " + Integer.toString(rowCount) + ") ");
+
+	    //System.out.println(rs.getString(1));
+
+	    lm.carbon_blockip[ix0] = new String(rs.getString(1));
+
+	    ix0++;
+
+	    }//while
 
 
 

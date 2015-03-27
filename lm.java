@@ -1,5 +1,7 @@
 //-OLDMAID
 
+import java.math.*;
+
 import java.io.*;
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +27,6 @@ import javax.swing.event.ChangeListener;
 import java.util.Arrays;
 import java.util.Comparator;
 
-
 import java.awt.Desktop;
 import javax.swing.JOptionPane;
 
@@ -40,18 +41,12 @@ import javax.xml.parsers.DocumentBuilder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException; 
 
-
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
-
-
 import org.apache.commons.io.IOUtils;
-
-
-
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -59,17 +54,18 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONValue;
 
+import com.subgraph.orchid.circuits.hs.HSDescriptorCookie;
+import com.subgraph.orchid.config.TorConfigBridgeLine;
+import com.subgraph.orchid.data.HexDigest;
+import com.subgraph.orchid.data.IPv4Address;
+import com.subgraph.orchid.encoders.Hex;
+import com.subgraph.orchid.*;
 
 
 
 
-
-
-
-
-
-
-
+import java.net.HttpURLConnection;
+import javax.net.SocketFactory;
 
 
 
@@ -84,6 +80,7 @@ Toolkit toolkit;
 
 String CURRENCY = new String("BTC");
 
+static TorClient tor;
 
 static String account_id = new String("");
 static String account_password = new String("");
@@ -95,7 +92,7 @@ JPanel jdx_px2 = new JPanel();
 
 //program info
 static String program_id = new String("LiteMarket");
-static String program_version = new String("1.1.1.0");
+static String program_version = new String("1.1.2");
 
 
 //wallet value
@@ -109,11 +106,13 @@ static Long wallet_value_paid = 0l;
 
 
 
-JMenuItem file_run = new JMenuItem("New Item");
+JMenuItem file_save = new JMenuItem("Save Settings");
+JMenuItem file_import_dbx = new JMenuItem("Import Items.csv");
 JMenuItem file_export_items = new JMenuItem("Export Items.csv");
 JMenuItem file_export_orders = new JMenuItem("Export Orders.csv");
 JMenuItem file_export_purchases = new JMenuItem("Export Purchases.csv");
-JMenuItem file_exit = new JMenuItem("Shutdown(0) Force Exit");
+JMenuItem file_export_inventory = new JMenuItem("Export Inventory.csv");
+JMenuItem file_exit = new JMenuItem("Exit (Force Shutdown)");
 
 JMenuItem edit_new = new JMenuItem("New Item");
 JMenuItem edit_new10 = new JMenuItem("Add 10 New Items");
@@ -125,6 +124,8 @@ JMenuItem tools_editname = new JMenuItem("Edit Store Name");
 JMenuItem tools_editpass = new JMenuItem("Edit Store Password");
 JMenuItem tools_editcurrency = new JMenuItem("Edit Store Currency");
 JMenuItem tools_editdbpass = new JMenuItem("Edit Database Password");
+JMenuItem tools_ip_log = new JMenuItem("View IP Log");
+JMenuItem tools_block_ip = new JMenuItem("Block IP Address");
 
 ButtonGroup group = new ButtonGroup();
 JRadioButtonMenuItem two_factor_y = new JRadioButtonMenuItem("Two factor Auth ON");
@@ -135,13 +136,14 @@ JMenuItem tools_donate = new JMenuItem("Donate BTC");
 JMenuItem database_info = new JMenuItem("Database Info");
 
 JMenuItem node_settings = new JMenuItem("Node Status Window");
+JMenuItem krypton_settings = new JMenuItem("Krypton");
 
 
 
 
 
 ButtonGroup group_btc = new ButtonGroup();
-JRadioButtonMenuItem info_account = new JRadioButtonMenuItem("Blockchaing.info Account");
+JRadioButtonMenuItem info_account = new JRadioButtonMenuItem("Blockchain.info Account");
 JRadioButtonMenuItem btqt_account = new JRadioButtonMenuItem("Bitcoin QT Account");
 JMenuItem account_settings = new JMenuItem("Account Settings");
 
@@ -167,6 +169,7 @@ FlowLayout flow2 = new FlowLayout(0);
 FlowLayout flow3 = new FlowLayout(0);
 FlowLayout flow5 = new FlowLayout(0);
 FlowLayout flow6 = new FlowLayout(0);
+FlowLayout flow7 = new FlowLayout(0);
 
 //info
 
@@ -220,8 +223,10 @@ static int getting_items = 0;
 static int connection_active = 0;
 static int rpc_connection_active = 0;
 static int server_requests = 0;
+static int gateway_port = 9291;
 static int api_port = 9292;
-static int server_port = 9293;//9293
+static int server_port = 55555;//9293
+static int client_port = 80;//9293
 static int rpc_wallet_port = 8332;  //AUR 12341
 static int serverx_active = 0;
 static int firexdb = 0;//load db
@@ -345,26 +350,9 @@ JMenuItem item3;
 JMenuItem item4;
 JMenuItem item5;
 JMenuItem item6;
+JMenuItem item7;
 
-JMenuItem item_0;
-JMenuItem item_1;
-JMenuItem item_2;
-JMenuItem item_3;
-JMenuItem item_4;
-JMenuItem item_5;
-JMenuItem item_6;
 
-JMenuItem itemx0;
-JMenuItem itemx1;
-JMenuItem itemx2;
-
-JMenuItem items0;
-JMenuItem items1;
-JMenuItem items2;
-JMenuItem items3;
-JMenuItem items4;
-JMenuItem items5;
-JMenuItem items6;
 
 
 
@@ -471,12 +459,14 @@ JPanel[] jpkx = new JPanel[1000];
 String[] test = new String[1];
 String[] database = new String[1];
 String[] node_network = new String[1];
+static String[] carbon_blockip = new String[0];
 static String[] carbon_settings = new String[100];
 static String[][] carbon = new String[82][1];
 static String[][] carbon_sell = new String[82][1];
 static String[][] carbon_buy = new String[82][1];
 static String[][] carbon_sold = new String[82][0];
 static String[][] carbon_purchase = new String[82][0];
+static String[][] ip_log = new String[4][500];
 static String error_codes_client = new String("");
 static String httpx = new String("");
 static String passx = new String("");
@@ -488,6 +478,7 @@ static String new_wallet_address = new String("");
 static String rpcaddress_confirm = new String("");
 static String send_payment_address = new String("");
 static String send_payment_amount = new String("");
+static String send_bid_amount = new String("");
 
 
 //edit
@@ -516,20 +507,20 @@ JButton searchb = new JButton("Search");
 JLabel infoxs1 = new JLabel("Loading...", JLabel.LEFT);
 JLabel infoxs2 = new JLabel("Loading...", JLabel.LEFT);
 JLabel infoxs3 = new JLabel("Loading...", JLabel.LEFT);
-JLabel infoxs4 = new JLabel("LiteMarket Port:9293   API Port:9292   Currency:" + CURRENCY + "   Program Version:" + program_version + "   Database Version:10.5.3.0", JLabel.LEFT);
+JLabel infoxs4 = new JLabel("LiteMarket Port:80   API Port:9292   Krypton Port:9295   Program Version:" + program_version + "   Database Version:10.5.3.0", JLabel.LEFT);
 
 
 Label infox1 = new Label("start", Label.LEFT);
 JLabel infox2 = new JLabel("Database: Online", JLabel.LEFT);
-JLabel infox3 = new JLabel("Server: Online", JLabel.LEFT);
+JLabel infox3 = new JLabel("Store: Online", JLabel.LEFT);
 JLabel infox4 = new JLabel("Uses(0)", JLabel.LEFT);
 JLabel infox5 = new JLabel("Wallet: Online", JLabel.LEFT);
-
+JLabel infox6 = new JLabel("TOR: Online", JLabel.LEFT);
 
 
 //connect
 
-JLabel url_info1 = new JLabel("Node Network", JLabel.RIGHT);
+JLabel url_info1 = new JLabel("LiteMarket Network", JLabel.RIGHT);
 JLabel url_info2 = new JLabel("Connect To Host", JLabel.RIGHT);
 JLabel url_info3 = new JLabel("Password", JLabel.RIGHT);
 JLabel url_info4 = new JLabel("", JLabel.LEFT);
@@ -561,26 +552,6 @@ lm(){//*************************************************************************
 
 	load_class_files();
 
-	try{loadx(); load_settings();}catch(Exception e){System.out.println("LOAD DB FAILED"); build_settings(); build_db bdb = new build_db();}
-
-	
-	try{
-	xzx = Integer.parseInt(carbon_settings[0]);
-	xzy = Integer.parseInt(carbon_settings[1]);
-	}catch(Exception e){xzx = 300; xzy = 300;}
-
-
-	int cenx = (scrSize.width / 2) - (xzx / 2);
-	int ceny = (scrSize.height / 2) - (xzy / 2);
-
-	setSize(xzx, xzy);
-	setLocation(cenx, (ceny - 14));
-	setResizable(true);
-	setAlwaysOnTop(false);
-        addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){save_settings(); savex(); System.exit(0);}});
-
-
-
 
 //the program icon 
 	//Image imageppx = new ImageIcon(this.getClass().getResource("images/qrcode.png")).getImage();
@@ -609,6 +580,81 @@ lm(){//*************************************************************************
 
 
 
+	infox1.setPreferredSize(new Dimension(300, 20));
+	//infox1.setIcon(imx6);
+	infox1.setFont(f_01);
+	infox1.setForeground(blackx);//darkgray08
+	//infox1.setToolTipText("status");
+
+	infox2.setPreferredSize(new Dimension(145, 20));
+	infox2.setIcon(imx4);
+	infox2.setFont(f_01);
+	infox2.setForeground(blackx);//darkgray08
+	infox2.setToolTipText("Database system");
+
+	infox3.setPreferredSize(new Dimension(130, 20));
+	infox3.setIcon(imx2);
+	infox3.setFont(f_01);
+	infox3.setForeground(blackx);//darkgray08
+	infox3.setToolTipText("Server System");
+
+	infox4.setPreferredSize(new Dimension(110, 20));
+	infox4.setIcon(imx2);
+	infox4.setFont(f_01);
+	infox4.setForeground(blackx);//darkgray08
+	infox4.setToolTipText("Server Requests");
+
+	infox5.setPreferredSize(new Dimension(110, 20));
+	infox5.setIcon(imx2);
+	infox5.setFont(f_01);
+	infox5.setForeground(blackx);//darkgray08
+	infox5.setToolTipText("QT Wallet");
+
+	infox6.setPreferredSize(new Dimension(110, 20));
+	infox6.setIcon(imx2);
+	infox6.setFont(f_01);
+	infox6.setForeground(blackx);//darkgray08
+	infox6.setToolTipText("TOR Network");
+
+	flow5.setHgap(0);
+	flow5.setVgap(2);
+
+
+
+
+	try{loadx(); load_settings();} catch(Exception e){System.out.println("LOAD DB FAILED"); build_settings(); build_db bdb = new build_db(); infox2.setIcon(imx2);}
+
+	
+	try{
+	xzx = Integer.parseInt(carbon_settings[0]);
+	xzy = Integer.parseInt(carbon_settings[1]);
+	}catch(Exception e){xzx = 300; xzy = 300;}
+
+
+	int cenx = (scrSize.width / 2) - (xzx / 2);
+	int ceny = (scrSize.height / 2) - (xzy / 2);
+
+	setSize(xzx, xzy);
+	setLocation(cenx, (ceny - 14));
+	setResizable(true);
+	setAlwaysOnTop(false);
+        addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){save_settings(); savex(); System.exit(0);}});
+
+
+
+
+
+
+	for(int xloop1 = 0; xloop1 < 500; xloop1++){//***********
+
+	ip_log[0][xloop1] = new String("");
+	ip_log[1][xloop1] = new String("");
+	ip_log[2][xloop1] = new String("");
+	ip_log[3][xloop1] = new String("");
+
+	}//******************************************************
+
+
 
 
 //menu
@@ -622,11 +668,13 @@ lm(){//*************************************************************************
 
 
 
-	item0 = new JMenuItem("View");
+	item0 = new JMenuItem("View/Edit");
 	item0.setFont(f_01);
 	item0.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e){}});
+	public void actionPerformed(ActionEvent e){view_edit_ss();}});
 	menu.add(item0);
+
+	menu.addSeparator();
 
 	item1 = new JMenuItem("New Payment Address");
 	item1.setFont(f_01);
@@ -634,6 +682,47 @@ lm(){//*************************************************************************
 	public void actionPerformed(ActionEvent e){get_new_payment_address();}});
 	menu.add(item1);
 
+	menu.addSeparator();
+
+	item2 = new JMenuItem("Buy");
+	item2.setFont(f_01);
+	item2.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){buy_item();}});
+	menu.add(item2);
+
+	item3 = new JMenuItem("Set Shipped");
+	item3.setFont(f_01);
+	item3.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){ship_item_confirm();}});
+	menu.add(item3);
+
+	item4 = new JMenuItem("Confirm Payment");
+	item4.setFont(f_01);
+	item4.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){refresh_xx();}});
+	menu.add(item4);
+
+	item5 = new JMenuItem("Export (.csv)");
+	item5.setFont(f_01);
+	item5.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){}});
+	menu.add(item5);
+
+	menu.addSeparator();
+
+	item6 = new JMenuItem("Delete");
+	item6.setFont(f_01);
+	item6.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){deletexx();}});
+	menu.add(item6);
+
+	menu.addSeparator();
+
+	item7 = new JMenuItem("Refund Order");
+	item7.setFont(f_01);
+	item7.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e){}});
+	menu.add(item7);
 
 
 //mouse right clicks
@@ -716,7 +805,7 @@ lm(){//*************************************************************************
 	buy_5.setHorizontalTextPosition(JButton.CENTER);
  	buy_5.setForeground(blackx);
 	buy_5.setBackground(grayx2);
-	buy_5.setToolTipText("Send");
+	buy_5.setToolTipText("Send a payment");
 
 	buy_6.setMargin(new Insets(0, 0, 0, 0));
   	buy_6.addActionListener(this);
@@ -752,7 +841,7 @@ lm(){//*************************************************************************
 	sort_3.setHorizontalTextPosition(JButton.CENTER);
  	sort_3.setForeground(blackx);
 	sort_3.setBackground(grayx3);
-	sort_3.setToolTipText("Sort");
+	sort_3.setToolTipText("Select All");
 
 	sort_4.setMargin(new Insets(0, 0, 0, 0));
   	sort_4.addActionListener(this);
@@ -776,7 +865,7 @@ lm(){//*************************************************************************
 	sort_6.setHorizontalTextPosition(JButton.CENTER);
  	sort_6.setForeground(blackx);
 	sort_6.setBackground(grayx3);
-	sort_6.setToolTipText("Select All");
+	sort_6.setToolTipText("Add tracking number to shipment");
 
 	sort_7.setMargin(new Insets(0, 0, 0, 0));
   	sort_7.addActionListener(this);
@@ -838,6 +927,7 @@ lm(){//*************************************************************************
 
 	url_info1.setPreferredSize(new Dimension(150, 20));
 	//url_info1.setFont(f_01);
+	url_info1.setIcon(imx2);
 	url_info1.setForeground(blackx);//darkgray08
 	url_info1.setToolTipText("");
 
@@ -1009,38 +1099,7 @@ lm(){//*************************************************************************
 
 
 
-	infox1.setPreferredSize(new Dimension(300, 20));
-	//infox1.setIcon(imx6);
-	infox1.setFont(f_01);
-	infox1.setForeground(blackx);//darkgray08
-	//infox1.setToolTipText("status");
 
-	infox2.setPreferredSize(new Dimension(145, 20));
-	infox2.setIcon(imx4);
-	infox2.setFont(f_01);
-	infox2.setForeground(blackx);//darkgray08
-	infox2.setToolTipText("Database system");
-
-	infox3.setPreferredSize(new Dimension(130, 20));
-	infox3.setIcon(imx2);
-	infox3.setFont(f_01);
-	infox3.setForeground(blackx);//darkgray08
-	infox3.setToolTipText("Server System");
-
-	infox4.setPreferredSize(new Dimension(110, 20));
-	infox4.setIcon(imx2);
-	infox4.setFont(f_01);
-	infox4.setForeground(blackx);//darkgray08
-	infox4.setToolTipText("Server Requests");
-
-	infox5.setPreferredSize(new Dimension(110, 20));
-	infox5.setIcon(imx2);
-	infox5.setFont(f_01);
-	infox5.setForeground(blackx);//darkgray08
-	infox5.setToolTipText("QT Wallet");
-
-	flow5.setHgap(0);
-	flow5.setVgap(2);
 
 
 
@@ -1268,6 +1327,7 @@ lm(){//*************************************************************************
 	jpk_info.add(infox3);
 	jpk_info.add(infox4);
 	jpk_info.add(infox5);
+	jpk_info.add(infox6);
 
 
 
@@ -1317,9 +1377,16 @@ lm(){//*************************************************************************
         menuBar.add(nodeMenu);
 
 
+
+	fileMenu.add(file_save);
+	//fileMenu.addSeparator();
+	fileMenu.add(file_import_dbx);
+	fileMenu.addSeparator();
 	fileMenu.add(file_export_items);
 	fileMenu.add(file_export_orders);
 	fileMenu.add(file_export_purchases);
+	fileMenu.addSeparator();
+	fileMenu.add(file_export_inventory);
 	fileMenu.addSeparator();
 	fileMenu.add(file_exit);
 
@@ -1338,6 +1405,9 @@ lm(){//*************************************************************************
         toolMenu.add(tools_editpass);
         toolMenu.add(tools_editdbpass);
 	toolMenu.addSeparator();
+        toolMenu.add(tools_ip_log);
+        toolMenu.add(tools_block_ip);
+	toolMenu.addSeparator();
         toolMenu.add(tools_send);
 	toolMenu.addSeparator();
         toolMenu.add(tools_donate);
@@ -1345,8 +1415,8 @@ lm(){//*************************************************************************
 
 	databaseMenu.add(database_info);
 
+	nodeMenu.add(krypton_settings);
 	nodeMenu.add(node_settings);
-
 
 
 
@@ -1355,8 +1425,8 @@ lm(){//*************************************************************************
 	wallet_system = Integer.parseInt(carbon_settings[26]);
 	}catch(Exception e){wallet_system = 0;}
 
-	if(wallet_system == 0){info_account.setSelected(true);}
-	else{btqt_account.setSelected(true);}
+	if(wallet_system == 0){info_account.setSelected(true); tools_send.setEnabled(true); tools_donate.setEnabled(true);}
+	else{btqt_account.setSelected(true); tools_send.setEnabled(false); tools_donate.setEnabled(false);}
 
 
 
@@ -1372,9 +1442,12 @@ lm(){//*************************************************************************
         accountMenu.addSeparator();
 	accountMenu.add(account_settings);
 
+	file_save.addActionListener(this);
+	file_import_dbx.addActionListener(this);
 	file_export_items.addActionListener(this);
 	file_export_orders.addActionListener(this);
 	file_export_purchases.addActionListener(this);
+	file_export_inventory.addActionListener(this);
 	file_exit.addActionListener(this);
 	
 	edit_new.addActionListener(this);
@@ -1388,6 +1461,8 @@ lm(){//*************************************************************************
 	tools_editdbpass.addActionListener(this);
         two_factor_y.addActionListener(this);
 	two_factor_n.addActionListener(this);
+	tools_ip_log.addActionListener(this);
+	tools_block_ip.addActionListener(this);
 	tools_send.addActionListener(this);
 	tools_donate.addActionListener(this);
 
@@ -1395,17 +1470,18 @@ lm(){//*************************************************************************
 
 	account_settings.addActionListener(this);
 
+	krypton_settings.addActionListener(this);
 	node_settings.addActionListener(this);
 
 
 
 
-
-
-
+	file_save.setFont(f_01);
+	file_import_dbx.setFont(f_01);
 	file_export_items.setFont(f_01);
 	file_export_orders.setFont(f_01);
 	file_export_purchases.setFont(f_01);
+	file_export_inventory.setFont(f_01);
 	file_exit.setFont(f_01);
 
 	edit_new.setFont(f_01);
@@ -1417,6 +1493,8 @@ lm(){//*************************************************************************
         tools_editname.setFont(f_01);
         tools_editpass.setFont(f_01);
 	tools_editdbpass.setFont(f_01);
+	tools_ip_log.setFont(f_01);
+	tools_block_ip.setFont(f_01);
         two_factor_y.setFont(f_01);
 	two_factor_n.setFont(f_01);
 	tools_send.setFont(f_01);
@@ -1428,8 +1506,8 @@ lm(){//*************************************************************************
 	btqt_account.setFont(f_01);
 	account_settings.setFont(f_01);
 
+	krypton_settings.setFont(f_01);
 	node_settings.setFont(f_01);
-
 
 
 
@@ -1450,7 +1528,14 @@ lm(){//*************************************************************************
 	cp.add(jpk_center);
 	cp.add(jpk_menu);
 	cp.add(jpk_info);
+
+
 	setVisible(true);
+
+
+
+
+
 
 	//get_btc_wallet();
 
@@ -1458,14 +1543,17 @@ lm(){//*************************************************************************
 	InetAddress IP = InetAddress.getLocalHost();
 	System.out.println("IP of my system is: " + IP.getHostAddress());
 	infoxs3.setText("System address: " + IP.getHostAddress());
-	infoxs3.setToolTipText("Many internet connections cannot receive inbound requests. You will need to set up your system so others can connect");
+	infoxs3.setToolTipText("Many internet connections cannot receive inbound requests. You will need to set up your system so others can connect.");
 	}catch(Exception e){System.out.println("Get IP address error!"); infoxs3.setText("Get IP address error!");}
+
+
 
 
 
 
 	//start server
 	infox1.setText("start server");
+	//gateway_server gatex = new gateway_server(); 
 	net_server netx = new net_server(); 
 	litemarket_api apix = new litemarket_api(); 
 
@@ -1487,19 +1575,39 @@ lm(){//*************************************************************************
 	xtimerx.schedule(new RemindTask_system_engine(), 0);
 
 
-	 CURRENCY = carbon_settings[9];
+	CURRENCY = carbon_settings[9];
+
+
+
+
+//start tor
+	try{
+	initTor();
+	}catch(Exception e){System.out.println("Cannot start TOR!"); JOptionPane.showMessageDialog(null, "Cannot start TOR!");}
 
 
 //test for RPC wallet
-
 	try{
 	rpc_client_test xc = new rpc_client_test();
-	if(rpc_connection_active == 1){infox5.setIcon(imx4);}
-	else{infox5.setIcon(imx2);}
+		if(rpc_connection_active == 1){infox5.setIcon(imx4);}
+		else{infox5.setIcon(imx2);}
 	}catch(Exception e){infox5.setIcon(imx2);}
+
 
 //get wallet info
 	get_btc_wallet();
+
+
+//start krypton
+	toolkit = Toolkit.getDefaultToolkit();
+	xtimerx = new Timer();
+	//xtimerx.schedule(new RemindTask_krypton(), 0);
+
+
+
+
+
+//JOptionPane.showMessageDialog(null, Integer.toString(carbon_blockip.length));
 
 }//*****************************************************************************
 
@@ -1542,8 +1650,11 @@ if(db_section == 0){//***********************************
 		for(int xloop = dbx_start; xloop < dbx_end; xloop++){//****************************************************
 
 
-		if(carbon_sell[item_listing_id_xx][xloop].equals("HIDDEN")){display_csvx_field_extra[1][xloop].setForeground(redx); display_csvx_field_extra[1][xloop].setText("x");}
+		if(carbon_sell[item_type_xx][xloop].equals("AUCTION") && carbon_sell[item_listing_id_xx][xloop].equals("HIDDEN")){display_csvx_field_extra[1][xloop].setForeground(redx); display_csvx_field_extra[1][xloop].setText("[a]");}
+		else if(carbon_sell[item_listing_id_xx][xloop].equals("HIDDEN")){display_csvx_field_extra[1][xloop].setForeground(redx); display_csvx_field_extra[1][xloop].setText("X");}
+		else if(carbon_sell[item_type_xx][xloop].equals("AUCTION")){display_csvx_field_extra[1][xloop].setForeground(bluex1); display_csvx_field_extra[1][xloop].setText("[a]");}
 		else{display_csvx_field_extra[1][xloop].setText("");}
+
 
 		display_csvx_field[0][xloop].setText(carbon_sell[item_title_xx][xloop]);
 		display_csvx_field[0][xloop].setToolTipText(carbon_sell[item_title_xx][xloop]);
@@ -1660,7 +1771,7 @@ if(what_item != 0){
 	else{carbon_sell[item_listing_id_xx][what_item] = "ACTIVE";}
 
 	if(xtype.getText().equals("LISTING")){}
-	else if(xtype.getText().equals("LISTING")){}
+	else if(xtype.getText().equals("AUCTION")){}
 	else{carbon_sell[item_type_xx][what_item] = "LISTING";}
 
 	xactive.setEnabled(true);
@@ -1686,6 +1797,10 @@ else if(db_section == 1){//******************************
 
 
 		for(int xloop = dbx_start; xloop < dbx_end; xloop++){//****************************************************
+
+
+		if(carbon_buy[item_type_xx][xloop].equals("AUCTION")){display_csvx_field_extra[1][xloop].setForeground(bluex1); display_csvx_field_extra[1][xloop].setText("[a]");}
+		else{display_csvx_field_extra[1][xloop].setText("");}
 
 
 		display_csvx_field[0][xloop].setText(carbon_buy[item_title_xx][xloop]);
@@ -1719,7 +1834,7 @@ else if(db_section == 1){//******************************
 
 	setTitle("LiteMarket - " + CURRENCY + " Wallet: " + carbon_settings[11]);
 
-	edit_info.setText("");
+	edit_info.setText(carbon_buy[item_title_xx][what_item]);
 
 	edit_id_test.setText("xx");
 
@@ -1842,8 +1957,9 @@ else if(db_section == 3){//******************************
 //}///****************
 
 
+	//update slow swing
 	try{
-	display_csvx_field_extra[0][0].setText("*0");
+	display_csvx_field_extra[0][0].setText("0 ");
 	display_csvx_field_extra[0][0].setText("0");
 	}catch(Exception e){}
 
@@ -1851,6 +1967,14 @@ else if(db_section == 3){//******************************
 
 
 	build_items_for_sale();
+
+
+	//buy it now or auction
+	try{
+	if(carbon_buy[item_type_xx][what_item].equals("AUCTION")){buy_1.setEnabled(false); buy_3.setEnabled(true);}
+	else{buy_1.setEnabled(true); buy_3.setEnabled(false);}
+	}catch(Exception e){buy_1.setEnabled(false); buy_3.setEnabled(false);}
+
 
 
 	infoxs1.setText(Integer.toString(total_items_selected) + " Item(s) selected");
@@ -2393,25 +2517,27 @@ else if(db_section == 3){//******************************
 
 	infox1.setText("get wallet balance");
 
-if(wallet_system == 0){blockchain_api_balance infox = new blockchain_api_balance();}
-else if(wallet_system == 1){rpc_client_balance rpcx = new rpc_client_balance();}
+
+	   try{
+
+		if(wallet_system == 0){blockchain_api_balance infox = new blockchain_api_balance();}
+		else if(wallet_system == 1){rpc_client_balance rpcx = new rpc_client_balance();}
+
+		infox5.setIcon(imx4);
+
+	   }catch(Exception e){infox5.setIcon(imx2);}
 
 	System.out.println(wallet_value);
 
 
-	wallet_value_s = Long.toString(wallet_value);
 
-	if(wallet_value_s.length() == 1){wallet_value_s = "0.0000000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 2){wallet_value_s = "0.000000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 3){wallet_value_s = "0.00000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 4){wallet_value_s = "0.0000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 5){wallet_value_s = "0.000" + wallet_value_s;}
-	else if(wallet_value_s.length() == 6){wallet_value_s = "0.00" + wallet_value_s;}
-	else if(wallet_value_s.length() == 7){wallet_value_s = "0.0" + wallet_value_s;}
-	else if(wallet_value_s.length() == 8){wallet_value_s = "0." + wallet_value_s;}
+	BigDecimal amount = new BigDecimal(wallet_value);  
+        BigDecimal size = new BigDecimal("100000000");   
+        System.out.println(amount.divide(size));
 
+	BigDecimal balance_x = amount.divide(size);  
 
-	if(Long.toString(wallet_value).length() >= 9){wallet_value_s = wallet_value_s.substring(0, wallet_value_s.length() -8) + "." + wallet_value_s.substring(wallet_value_s.length() -8, wallet_value_s.length());}
+	wallet_value_s = balance_x.toString();
 
 
 	coins.setText(wallet_value_s + " " + CURRENCY);
@@ -2425,9 +2551,11 @@ else if(wallet_system == 1){rpc_client_balance rpcx = new rpc_client_balance();}
 
 
 
+
+
+
+
 	public void refreshx(){
-
-
 
 
 	//sizes
@@ -2464,7 +2592,7 @@ else if(wallet_system == 1){rpc_client_balance rpcx = new rpc_client_balance();}
 	jpk_menu.setPreferredSize(new Dimension(x - 20, 95));
 	jpk_info.setPreferredSize(new Dimension(x - 20, 30));
 
-	infox1.setPreferredSize(new Dimension(x - 550, 20));
+	infox1.setPreferredSize(new Dimension(x - 660, 20));
 
 
 	//label info
@@ -3009,10 +3137,10 @@ if(db_section == 2 || db_section == 3){
 	carbon_build[22][hh3] = new String("0");//hits
 	carbon_build[23][hh3] = new String("item_confirm_code");
 	carbon_build[24][hh3] = new String("item_confirmed");
-	carbon_build[25][hh3] = new String("0.00");//cost
+	carbon_build[25][hh3] = new String("0.00000000");//cost
 	carbon_build[26][hh3] = new String("item_description");
 	carbon_build[27][hh3] = new String(Long.toString(System.currentTimeMillis()));//item_id
-	carbon_build[28][hh3] = new String("110.01");//sale price
+	carbon_build[28][hh3] = new String("1.01000000");//sale price
 	carbon_build[29][hh3] = new String("33");//weight
 	carbon_build[30][hh3] = new String("item_listing_id");//ACTIVE OR NOT
 	carbon_build[31][hh3] = new String("item_notes");
@@ -3081,6 +3209,166 @@ if(db_section == 2 || db_section == 3){
 	else if(db_section == 1){buy_button_click();}
 
 	}//*********************
+
+
+
+
+
+
+
+
+
+
+
+
+	public void make_item10(){
+	
+	System.out.println("Make 10 New Item");
+
+
+for(int xloop0 = 0; xloop0 < 10; xloop0++){//************************************************
+
+
+
+	int hh3 = 0;
+	int hh4 = 0;
+
+	if(db_section == 0){hh3 = carbon_sell[0].length;}
+	else if(db_section == 1){hh3 = carbon_buy[0].length;}
+
+	if(db_section == 0){hh4 = carbon_sell[0].length + 1;}
+	else if(db_section == 1){hh4 = carbon_buy[0].length + 1;}
+
+	System.out.println("hh3 " + hh3);
+	System.out.println("hh4 " + hh4);
+
+	String[][] carbon_build = new String[db_sections][hh4];
+
+
+	
+	for(int xloop1 = 0; xloop1 < hh3; xloop1++){//********************************************************
+
+	for(int xloop2 = 0; xloop2 < db_sections; xloop2++){//*******************************************
+
+	System.out.println(carbon_build[xloop2][xloop1]);
+	System.out.println(carbon_sell[xloop2][xloop1]);
+
+	if(db_section == 0){carbon_build[xloop2][xloop1] = carbon_sell[xloop2][xloop1];}
+	else if(db_section == 1){carbon_build[xloop2][xloop1] = carbon_buy[xloop2][xloop1];}
+
+	}//for*******************************************************************************************
+
+	}//for************************************************************************************************
+
+
+
+	carbon_build[0][hh3]  = new String("buyer_address_1");
+	carbon_build[1][hh3]  = new String("buyer_address_2");
+	carbon_build[2][hh3]  = new String("buyer_address_city");
+	carbon_build[3][hh3]  = new String("buyer_address_state");
+	carbon_build[4][hh3]  = new String("buyer_address_zip");
+	carbon_build[5][hh3]  = new String("buyer_address_country");
+	carbon_build[6][hh3]  = new String("buyer_id");//BTC ADDRESS
+	carbon_build[7][hh3]  = new String("buyer_ip");
+	carbon_build[8][hh3]  = new String("buyers_email");
+	carbon_build[9][hh3]  = new String("buyers_first_name");
+	carbon_build[10][hh3] = new String("buyers_last_name");
+	carbon_build[11][hh3] = new String("buyers_payment_address");
+	carbon_build[12][hh3] = new String("buyers_phone");
+	carbon_build[13][hh3] = new String(carbon_settings[9]);//currency
+	carbon_build[14][hh3] = new String("custom_template");
+	carbon_build[15][hh3] = new String("custom_1");
+	carbon_build[16][hh3] = new String("custom_2");
+	carbon_build[17][hh3] = new String("custom_3");
+	carbon_build[18][hh3] = new String("item_errors");
+	carbon_build[19][hh3] = new String("item_date_listed");
+	carbon_build[20][hh3] = new String("item_date_listed_day");
+	carbon_build[21][hh3] = new String("item_date_listed_int");
+	carbon_build[22][hh3] = new String("0");//hits
+	carbon_build[23][hh3] = new String("item_confirm_code");
+	carbon_build[24][hh3] = new String("item_confirmed");
+	carbon_build[25][hh3] = new String("0.00000000");//cost
+	carbon_build[26][hh3] = new String("item_description");
+	carbon_build[27][hh3] = new String(Long.toString(System.currentTimeMillis()));//item_id
+	carbon_build[28][hh3] = new String("1.01000000");//sale price
+	carbon_build[29][hh3] = new String("33");//weight
+	carbon_build[30][hh3] = new String("item_listing_id");//ACTIVE OR NOT
+	carbon_build[31][hh3] = new String("item_notes");
+	carbon_build[32][hh3] = new String("10");//item_package_d
+	carbon_build[33][hh3] = new String("10");//item_package_l
+	carbon_build[34][hh3] = new String("10");//item_package_w
+	carbon_build[35][hh3] = new String("item_part_number");
+	carbon_build[36][hh3] = new String("new item");//title
+	carbon_build[37][hh3] = new String("item_title_url");
+	carbon_build[38][hh3] = new String("item_type");
+	carbon_build[39][hh3] = new String("item_search_1");
+	carbon_build[40][hh3] = new String("item_search_2");
+	carbon_build[41][hh3] = new String("item_search_3");
+	carbon_build[42][hh3] = new String("item_site_id");
+	carbon_build[43][hh3] = new String("item_site_url");
+	carbon_build[44][hh3] = new String("[url]/pictures/");//picture_1
+	carbon_build[45][hh3] = new String("0");//item_total_on_hand
+	carbon_build[46][hh3] = new String("sale_date_payment_received");
+	carbon_build[47][hh3] = new String("sale_date_shipped");
+	carbon_build[48][hh3] = new String("sale_date_sold");
+	carbon_build[49][hh3] = new String("sale_final_value_fee");
+	carbon_build[50][hh3] = new String("sale_handling");
+	carbon_build[51][hh3] = new String("sale_payment_address");
+	carbon_build[52][hh3] = new String("sale_payment_type");
+	carbon_build[53][hh3] = new String("sale_fees");
+	carbon_build[54][hh3] = new String("sale_quantity_sold");
+	carbon_build[55][hh3] = new String("sale_id");
+	carbon_build[56][hh3] = new String("sale_seller_id");
+	carbon_build[57][hh3] = new String("Unsold");//sale_status
+	carbon_build[58][hh3] = new String("0.00");//sale_tax
+	carbon_build[59][hh3] = new String("sale_shipping_company");
+	carbon_build[60][hh3] = new String("0.00");//sale_shipping_in
+	carbon_build[61][hh3] = new String("0.00");//sale_shipping_out
+	carbon_build[62][hh3] = new String("sale_source_of_sale");
+	carbon_build[63][hh3] = new String("sale_total_sale_amount");
+	carbon_build[64][hh3] = new String("sale_tracking_number");
+	carbon_build[65][hh3] = new String("sale_transaction_id");
+	carbon_build[66][hh3] = new String("sale_transaction_info");
+	carbon_build[67][hh3] = new String("seller_address_1");
+	carbon_build[68][hh3] = new String("seller_address_2");
+	carbon_build[69][hh3] = new String("seller_address_city");
+	carbon_build[70][hh3] = new String("seller_address_state");
+	carbon_build[71][hh3] = new String("seller_address_zip");
+	carbon_build[72][hh3] = new String("seller_address_country");
+	carbon_build[73][hh3] = new String("seller_id");//BTC ADDRESS
+	carbon_build[74][hh3] = new String("seller_ip");
+	carbon_build[75][hh3] = new String("seller_email");
+	carbon_build[76][hh3] = new String("seller_first_name");
+	carbon_build[77][hh3] = new String("seller_last_name");
+	carbon_build[78][hh3] = new String("seller_notes");
+	carbon_build[79][hh3] = new String("seller_phone");
+	carbon_build[80][hh3] = new String("seller_logo");
+	carbon_build[81][hh3] = new String("seller_url");
+
+
+
+	if(db_section == 0){carbon_sell = carbon_build;}
+	else if(db_section == 1){carbon_buy = carbon_build;}
+
+	if(db_section == 0){dbx_end = carbon_sell[0].length;}
+	else if(db_section == 1){dbx_end = carbon_buy[0].length;}
+
+
+}//for***************************************************************************************
+
+
+
+
+
+
+	if(db_section == 0){sell_button_click();}
+	else if(db_section == 1){buy_button_click();}
+
+	}//*********************
+
+
+
+
 
 
 
@@ -3259,14 +3547,14 @@ if(db_section == 2 || db_section == 3){
 
 	System.out.println("system loop 1");
 
-	infox1.setText("system loop 1");
+	//infox1.setText("system loop 1");
 
 
 	inventory.setText("Orders (" + carbon_sold[0].length + ")");
 	purchased.setText("Purchased (" + carbon_purchase[0].length + ")");
 
 
-	infox1.setText("system loop 2");
+	//infox1.setText("system loop 2");
 
 
 	if(server_requests > 0){infox4.setIcon(imx4);}
@@ -3274,7 +3562,7 @@ if(db_section == 2 || db_section == 3){
 	infox4.setText("Uses(" + server_requests + ")");
 
 
-	infox1.setText("system loop 3");
+	//infox1.setText("system loop 3");
 
 
 		for(int xloop1 = 1; xloop1 < carbon_sell[0].length; xloop1++){//***********
@@ -3297,7 +3585,7 @@ if(db_section == 2 || db_section == 3){
 		}//************************************************************************
 
 
-	infox1.setText("system loop 4");
+	//infox1.setText("system loop 4");
 
 	System.out.println("RUNTIME " + runtimexx);
 		if(runtimexx == 200){
@@ -3307,7 +3595,8 @@ if(db_section == 2 || db_section == 3){
 		}//******************
 
 
-	infox1.setText("system loop 5");
+	//infox1.setText("system loop 5");
+
 
 
 
@@ -3428,6 +3717,20 @@ if(db_section == 2 || db_section == 3){
 
 
 
+	class RemindTask_krypton extends TimerTask{
+	Runtime rxrunti = Runtime.getRuntime();
+
+	public void run(){//**************************************************************************************
+
+	krypton kx = new krypton();
+
+	get_krypton_ip_list();
+
+	}//runx***************************************************************************************************
+        }//remindtask
+
+
+
 
 
 //tasks**************************************************************************************************
@@ -3438,6 +3741,129 @@ if(db_section == 2 || db_section == 3){
 
 //tools**************************************************************************************************
 //tools**************************************************************************************************
+
+
+
+
+	public void get_krypton_ip_list(){
+
+	System.out.println("Krypton API");
+
+	
+	   String jsonText = new String("");
+
+
+	   try{
+
+	   	JSONObject obj = new JSONObject();
+	   	obj.put("request", "providers");
+	   	obj.put("password", "");
+
+	   	StringWriter out = new StringWriter();
+	   	obj.writeJSONString(out);
+	   	jsonText = out.toString();
+	   	System.out.println(jsonText);
+	
+	   }catch(Exception e){System.out.println("JSON ERROR");}
+
+
+	    String sentence;   
+	    String modifiedSentence;  
+	    String[][] JsonArray; 
+
+	    try{
+
+		BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
+		Socket clientSocket = new Socket("127.0.0.1", 9295);   
+		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));    
+		sentence = jsonText;  
+		outToServer.writeBytes(sentence + '\n');   
+		modifiedSentence = inFromServer.readLine();   
+		System.out.println("FROM SERVER: " + modifiedSentence);
+		clientSocket.close();
+
+
+		JSONParser parser = new JSONParser();
+		Object obj = parser.parse(modifiedSentence);
+		JSONObject jsonObject = (JSONObject) obj;
+  
+		String response = (String) jsonObject.get("response");
+		//System.out.println("JSON " + response);
+
+
+
+
+			Object obj2 = parser.parse(response);
+			JSONObject jsonObject2 = (JSONObject) obj2;
+
+			JsonArray = new String[3][jsonObject2.size()];
+
+
+			for(int loop = 0; loop < JsonArray[0].length; loop++){
+
+				String string1 = (String) jsonObject2.get(Integer.toString(loop));
+
+				JsonArray[0][loop] = new String(Integer.toString(loop));
+
+				int plus = string1.indexOf("*");
+
+				JsonArray[1][loop] = new String(string1.substring(0, plus));
+				JsonArray[2][loop] = new String(string1.substring((plus + 1), string1.length()));
+
+			}//***************************************************
+
+
+			try{
+
+			node_network = new String[JsonArray[0].length + 1];
+
+			node_network[0] = new String("Offline");
+
+			System.out.println(JsonArray[0][0]);
+			System.out.println(JsonArray[1][0]);
+			System.out.println(JsonArray[2][0]);
+
+			urlx1.removeAllItems();
+
+
+			for(int loop = 0; loop < JsonArray[0].length; loop++){
+
+			node_network[(loop +1)] = new String(JsonArray[1][loop]);
+
+			}//***************************************************
+
+
+			for(int loop = 0; loop < node_network.length; loop++){
+
+			urlx1.addItem(node_network[loop]);
+
+			}//***************************************************
+
+				
+
+
+			url_info1.setIcon(imx4);
+
+			}catch(Exception e){
+
+			e.printStackTrace();
+
+			}//*****************
+
+
+
+
+
+	   }catch(Exception e){e.printStackTrace(); System.out.println("Join Network Error 35");}
+
+	}//*******************************
+
+
+
+
+
+
 
 
 
@@ -3749,6 +4175,12 @@ if(db_section == 2 || db_section == 3){
 
 	item0.setEnabled(true);
 	item1.setEnabled(true);
+	item2.setEnabled(false);
+	item3.setEnabled(false);
+	item4.setEnabled(false);
+	item5.setEnabled(true);
+	item6.setEnabled(true);
+	item7.setEnabled(false);
 
 	buy_1.setEnabled(false);
 	buy_2.setEnabled(false);
@@ -3765,6 +4197,11 @@ if(db_section == 2 || db_section == 3){
 	sort_6.setEnabled(false);
 	sort_7.setEnabled(true);
 	sort_8.setEnabled(true);
+
+	file_import_dbx.setEnabled(true);
+	file_export_items.setEnabled(true);
+	file_export_orders.setEnabled(false);
+	file_export_purchases.setEnabled(false);
 
 	edit_new.setEnabled(true);
 	edit_new10.setEnabled(true);
@@ -3832,13 +4269,19 @@ if(db_section == 2 || db_section == 3){
 
 	item0.setEnabled(true);
 	item1.setEnabled(false);
+	item2.setEnabled(true);
+	item3.setEnabled(false);
+	item4.setEnabled(false);
+	item5.setEnabled(true);
+	item6.setEnabled(false);
 
 	buy_1.setEnabled(true);
 	buy_2.setEnabled(false);
 	buy_3.setEnabled(false);
 	buy_4.setEnabled(false);
-	buy_5.setEnabled(false);
+	buy_5.setEnabled(true);
 	buy_6.setEnabled(false);
+	item7.setEnabled(false);
 
 	sort_1.setEnabled(false);
 	sort_2.setEnabled(false);
@@ -3848,6 +4291,11 @@ if(db_section == 2 || db_section == 3){
 	sort_6.setEnabled(false);
 	sort_7.setEnabled(false);
 	sort_8.setEnabled(true);
+
+	file_import_dbx.setEnabled(false);
+	file_export_items.setEnabled(false);
+	file_export_orders.setEnabled(false);
+	file_export_purchases.setEnabled(false);
 
 	edit_new.setEnabled(false);
 	edit_new10.setEnabled(false);
@@ -3917,6 +4365,12 @@ if(db_section == 2 || db_section == 3){
 
 	item0.setEnabled(true);
 	item1.setEnabled(false);
+	item2.setEnabled(false);
+	item3.setEnabled(true);
+	item4.setEnabled(true);
+	item5.setEnabled(true);
+	item6.setEnabled(true);
+	item7.setEnabled(true);
 
 	buy_1.setEnabled(false);
 	buy_2.setEnabled(false);
@@ -3933,6 +4387,11 @@ if(db_section == 2 || db_section == 3){
 	sort_6.setEnabled(true);
 	sort_7.setEnabled(false);
 	sort_8.setEnabled(true);
+
+	file_import_dbx.setEnabled(false);
+	file_export_items.setEnabled(false);
+	file_export_orders.setEnabled(true);
+	file_export_purchases.setEnabled(false);
 
 	edit_new.setEnabled(false);
 	edit_new10.setEnabled(false);
@@ -4002,6 +4461,12 @@ if(db_section == 2 || db_section == 3){
 
 	item0.setEnabled(true);
 	item1.setEnabled(false);
+	item2.setEnabled(false);
+	item3.setEnabled(false);
+	item4.setEnabled(false);
+	item5.setEnabled(true);
+	item6.setEnabled(true);
+	item7.setEnabled(false);
 
 	buy_1.setEnabled(false);
 	buy_2.setEnabled(false);
@@ -4018,6 +4483,11 @@ if(db_section == 2 || db_section == 3){
 	sort_6.setEnabled(false);
 	sort_7.setEnabled(false);
 	sort_8.setEnabled(true);
+
+	file_import_dbx.setEnabled(false);
+	file_export_items.setEnabled(false);
+	file_export_orders.setEnabled(false);
+	file_export_purchases.setEnabled(true);
 
 	edit_new.setEnabled(false);
 	edit_new10.setEnabled(false);
@@ -4077,6 +4547,8 @@ if(db_section == 2 || db_section == 3){
 	infox1.setText("start server"); 
 	infox3.setIcon(imx4);
 
+	JOptionPane.showMessageDialog(null, "Make sure to install TOR before you put your server online!");
+
 	serverx_active = 1;
 
 	}//*********************
@@ -4106,7 +4578,8 @@ if(db_section == 2 || db_section == 3){
 
 	getting_items = 0;//turn other worker off
 
-	httpx = urlc1.getText();
+	if(String.valueOf(urlx1.getSelectedItem()).equals("Offline")){httpx = urlc1.getText();}
+	else{httpx = String.valueOf(urlx1.getSelectedItem());}
 	passx = urlp1.getText();
 
 	httpx = httpx.toLowerCase();
@@ -4165,7 +4638,18 @@ if(db_section == 2 || db_section == 3){
 
 	public void listing_type(){
 
+	if(carbon_sell[item_type_xx][what_item].equals("LISTING")){
 
+	carbon_sell[item_type_xx][what_item] = "AUCTION";
+	display_item();
+
+	}//*************************************************************
+	else{
+
+	carbon_sell[item_type_xx][what_item] = "LISTING";
+	display_item();
+
+	}//**
 
 	}//*************************
 
@@ -4302,11 +4786,40 @@ if(what_item != 0){
 
 	}//else
 
-	}catch(Exception e){e.printStackTrace(); JOptionPane.showMessageDialog(null, "Error buying the item");}
+	}catch(Exception e){e.printStackTrace(); JOptionPane.showMessageDialog(null, "Error buying the item!");}
 
 }//if
 
 	}//********************
+
+
+
+
+
+
+
+
+	public void bid_item(){//******
+
+
+		String response2 = JOptionPane.showInputDialog(null, "Enter Bitcoin Amount. Example 0.12300000", "Bid Amount", JOptionPane.QUESTION_MESSAGE);
+ 		if(response2.length() == 0 && total_items_selected == 1){
+
+
+
+
+		send_bid_amount = response2;
+		
+
+
+		net_client_bid net_bit = new net_client_bid();
+
+		}//******************************************************
+
+
+	}//****************************
+
+
 
 
 
@@ -4461,6 +4974,61 @@ if(what_item != 0){
 
 
 	}//*****************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void export_inventory_csv(){
+
+	System.out.println("Export Inventory");
+
+
+	try {
+        BufferedWriter out = new BufferedWriter(new FileWriter("LM_Invenotry.csv"));
+
+	for (int loop1 = 0; loop1 < carbon_sell[0].length; loop1++){//*************************
+
+	try{out.write(carbon_sell[item_part_number_xx][loop1]);}catch(Exception e){out.write("null");}
+	out.write(",");
+
+	try{out.write(carbon_sell[item_total_on_hand_xx][loop1]);}catch(Exception e){out.write("null");}
+	out.write("");
+
+	out.newLine();
+	}//for*********************************************************************************
+	
+        out.close();
+        } catch (IOException e) {System.out.println("print fail.");}
+
+
+
+	JOptionPane.showMessageDialog(null, "Exported. LM_Invenotry.csv");
+
+
+	}//*****************************
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4845,6 +5413,143 @@ if(what_item != 0){
 
 
 
+
+
+	public void import_csv_items(){
+
+		int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to import new items?");
+ 		if(response == 0){
+
+
+
+
+
+
+
+
+		JOptionPane.showMessageDialog(null, "Imported");
+
+		}//***************
+
+
+
+	}//****************************
+
+
+
+
+
+
+
+
+
+	public void block_ip_address(){
+
+	String response2 = "";
+
+	response2 = JOptionPane.showInputDialog(null, "Enter the ip address", "Block IP", JOptionPane.QUESTION_MESSAGE);
+
+	System.out.println(response2);
+
+	if(response2 == null){JOptionPane.showMessageDialog(null, "Response is NULL");}
+	else{
+
+		if(response2.length() > 1){
+
+			  	String[] new_list = new String[(carbon_blockip.length + 1)];
+
+			  for(int xloopx1 = 0; xloopx1 < carbon_blockip.length; xloopx1++){//******
+
+			  new_list[xloopx1] = carbon_blockip[xloopx1];
+
+			  }//**********************************************************************
+
+		new_list[(carbon_blockip.length)] = response2;
+
+			carbon_blockip = new_list;
+
+		JOptionPane.showMessageDialog(null, response2 + " Blocked!");
+
+		}//*************************
+		else{JOptionPane.showMessageDialog(null, "Error");}
+
+	}//else
+
+
+	}//*****************************
+
+
+
+
+
+
+
+
+
+
+	public void refundx(){
+
+	System.out.println("Refund BTC");
+
+		if(total_items_selected == 1){//*************************
+
+			if(wallet_system == 0){
+
+				   String response3 = new String("");
+			   	   if(second_passworld_select == 1){response3 = JOptionPane.showInputDialog(null, "Enter Second Password", "Second Password", JOptionPane.QUESTION_MESSAGE);}
+
+				if(response3.length() > 0 || second_passworld_select == 0){
+
+				  lm.send_payment_address = carbon_sold[buyer_id_xx][what_item];
+				  lm.send_payment_amount = carbon_sold[sale_total_sale_amount_xx][what_item];
+				  lm.second_password = response3;
+
+				blockchain_api_send bapis = new blockchain_api_send();
+
+				}//************************
+
+			}//********************
+			else{//
+
+
+
+
+
+
+
+
+
+
+			}//else
+
+
+		}//******************************************************
+
+
+	}//**********************
+
+
+
+
+
+
+
+
+	public void show_krypton_console(){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //***************************************************************************************************************************
 //***************************************************************************************************************************
 
@@ -4855,11 +5560,50 @@ public void actionPerformed(ActionEvent event){
 
 
 
+	if(event.getSource() == file_save)                {jdb_save jdbx = new jdb_save();}
+	if(event.getSource() == file_import_dbx)          {import_csv_items();}
+	if(event.getSource() == file_export_items)        {export_items_csv();}
+	if(event.getSource() == file_export_orders)       {export_orders_csv();}
+	if(event.getSource() == file_export_purchases)    {export_purchases_csv();}
+	if(event.getSource() == file_export_inventory)    {export_inventory_csv();}
+	if(event.getSource() == file_exit)                {System.exit(0);}
+
+	if(event.getSource() == edit_new)                 {make_item();}
+	if(event.getSource() == edit_new10)               {make_item10();}
+	if(event.getSource() == edit_edit)                {view_edit_ss();}
+	if(event.getSource() == edit_replace)             {replace rx = new replace();}
+	if(event.getSource() == edit_delete)              {deletexx();}
+
+	if(event.getSource() == tools_editname)           {store_name();}
+	if(event.getSource() == tools_editpass)           {store_password();}
+	if(event.getSource() == tools_editdbpass)         {db_password();}
+	if(event.getSource() == two_factor_y)             {second_passworld_select = 1;}
+	if(event.getSource() == two_factor_n)             {second_passworld_select = 0;}
+	if(event.getSource() == tools_ip_log)             {view_ip_log ipl = new view_ip_log();}
+	if(event.getSource() == tools_block_ip)           {block_ip_address();}
+	if(event.getSource() == tools_send)               {send_btc();}
+	if(event.getSource() == tools_donate)             {donate_btc();}
+
+	if(event.getSource() == database_info)            {JOptionPane.showMessageDialog(null, "Local JDB Database: Apache Derby - 10.5.3.0 - (802917)");}
+
+	if(event.getSource() == account_settings)         {btcinfo_settings info = new btcinfo_settings();}
+
+	if(event.getSource() == krypton_settings)         {show_krypton_console();}
+	if(event.getSource() == node_settings)            {JOptionPane.showMessageDialog(null, "Node network offline");}
 
 
+	if(event.getSource() == item0)                    {}
+	if(event.getSource() == item1)                    {}
+	if(event.getSource() == item2)                    {}
+	if(event.getSource() == item3)                    {}
+	if(event.getSource() == item4)                    {}
+	if(event.getSource() == item5)                    {}
+	if(event.getSource() == item6)                    {}
+	if(event.getSource() == item7)                    {refundx();}
 
-	if(event.getSource() == info_account)             {wallet_system = 0;}
-	if(event.getSource() == btqt_account)             {wallet_system = 1;}
+
+	if(event.getSource() == info_account)             {wallet_system = 0; tools_send.setEnabled(true); tools_donate.setEnabled(true);}
+	if(event.getSource() == btqt_account)             {wallet_system = 1; tools_send.setEnabled(false); tools_donate.setEnabled(false);}
 
 	if(event.getSource() == url_connect)              {connectedx();}
 	if(event.getSource() == searchb)                  {get_inventory();}
@@ -4875,7 +5619,6 @@ public void actionPerformed(ActionEvent event){
 	if(event.getSource() == purchased)                {purchase_button_click();}
 
 
-
 	if(event.getSource() == sort_1)                   {make_item();}
 	if(event.getSource() == sort_2)                   {view_edit_ss();}
 	if(event.getSource() == sort_3)                   {select_all_items1();}
@@ -4886,34 +5629,13 @@ public void actionPerformed(ActionEvent event){
 	if(event.getSource() == sort_8)                   {server_ox();}
 
 	if(event.getSource() == buy_1)                    {buy_item();}
+	if(event.getSource() == buy_3)                    {bid_item();}
+	if(event.getSource() == buy_5)                    {send_btc();}
 
 
 
 
-	if(event.getSource() == file_export_items)        {export_items_csv();}
-	if(event.getSource() == file_export_orders)       {export_orders_csv();}
-	if(event.getSource() == file_export_purchases)    {export_purchases_csv();}
-	if(event.getSource() == file_exit)                {System.exit(0);}
 
-	if(event.getSource() == edit_new)                 {make_item();}
-	if(event.getSource() == edit_new10)               {}
-	if(event.getSource() == edit_edit)                {view_edit_ss();}
-	if(event.getSource() == edit_replace)             {replace rx = new replace();}
-	if(event.getSource() == edit_delete)              {deletexx();}
-
-	if(event.getSource() == tools_editname)           {store_name();}
-	if(event.getSource() == tools_editpass)           {store_password();}
-	if(event.getSource() == tools_editdbpass)         {db_password();}
-	if(event.getSource() == two_factor_y)             {second_passworld_select = 1;}
-	if(event.getSource() == two_factor_n)             {second_passworld_select = 0;}
-	if(event.getSource() == tools_send)               {send_btc();}
-	if(event.getSource() == tools_donate)             {donate_btc();}
-
-	if(event.getSource() == database_info)            {JOptionPane.showMessageDialog(null, "Local JDB Database: Apache Derby - 10.5.3.0 - (802917)");}
-
-	if(event.getSource() == account_settings)         {btcinfo_settings info = new btcinfo_settings();}
-
-	if(event.getSource() == node_settings)            {JOptionPane.showMessageDialog(null, "Node network offline");}
 
 	
 
@@ -5076,6 +5798,47 @@ public void actionPerformed(ActionEvent event){
 
 
 	}//****************************
+
+
+
+
+
+	public void initTor() throws Exception {
+
+        // Oracle actually got permission to enable AES256 everywhere years ago anyway, they just didn't get around to
+        // actually doing so yet!
+        tor = new TorClient();
+        tor.addInitializationListener(new TorInitializationListener() {
+            @Override
+            public void initializationProgress(String message, int percent) {
+
+                System.out.println(">>> [ " + percent + "% ]: " + message);
+		infox1.setText("LOAD TOR >>> [ " + percent + "% ]: " + message);
+
+            }//**************************************************************
+
+            @Override
+            public void initializationCompleted() {
+
+                System.out.println("Tor is ready to go!");
+		infox6.setIcon(imx4);
+
+
+            }//************************************
+        });
+
+        tor.start();
+
+
+
+
+
+
+    	}//****************************************
+
+
+
+
 
 
 
