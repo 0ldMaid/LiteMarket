@@ -15,7 +15,7 @@
 <br>
 
 <p>TOR torrc file</p>
-You can use TOR to host your store from any computer with any interent connection. The LiteMarket can connect to stores using TOR, but to host your store you need to download TOR.
+You can use TOR to host your store from any computer with any internet connection. The LiteMarket can connect to stores using Orchid, but to host your store you need to download TOR.
 And change the torrc file to these settings.
 
 HiddenServiceDir C:\Users\...YOUR DOCUMENTS!...\Documents\tor\hidden_service
