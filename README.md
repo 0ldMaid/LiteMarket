@@ -18,12 +18,12 @@
 You can use TOR to host your store from any computer with any internet connection. The LiteMarket can connect to stores using Orchid, but to host your store you need to download TOR.
 And change the torrc file to these settings.
 
-HiddenServiceDir C:\Users\...YOUR DOCUMENTS!...\Documents\tor\hidden_service
+HiddenServiceDir C:\Users\...YOUR DOCUMENTS!...\Documents\tor\hidden_service<br>
 HiddenServicePort 80 127.0.0.1:55555
 <br>
 
 <p>JRE Notes.</p>
-The Java JRE 7 that is packaged with the installer has 2 changes that would need to be added on your system as well if you want to use your own JRE. The Extensions, and the COMODO site certificate for Blockchain.info. At the time of writing the JRE 7 Doesn't have a certificate for Blockchain.info if you try to connect through https you'll get errors. You don't need this if your using the Bitcoin qt was your wallet. 
+The Java JRE 7 that is packaged with the installer has 2 changes that would need to be added on your system as well if you want to use your own JRE. The Extensions, and the COMODO site certificate for Blockchain.info. At the time of writing the JRE 7 Doesn't have a certificate for Blockchain.info if you try to connect through https you'll get errors. You don't need this if your using the Bitcoin qt as your wallet. 
 
 <br>
 RPC commands.
