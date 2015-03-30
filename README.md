@@ -7,7 +7,7 @@
 
 <p>The platform can be used as a shop server for buyers to connect to, or can be used by buyers to connect to another friend's shop. All requests are JSON requests back and forth between the programs. The server program must have the ability to receive incoming socket connections just like a website server. If your using 3G or behind some router you probably won't be able to host a shop. Buyers should have no trouble connecting to an established store. </p>
 
-<p>Litemarket is a breakdown of the website to it's simplest parts. A database, and a way to view it's contents. When you go to a website they have great graphics and logos, videos everywhere and all kinds of extra stuff. Although that stuff looks great and helps to calm your fears of entering your credit card info. In the world of Bitcoin it's not necessary. I always hear people talking about how they want Amazon or eBay to accept Bitcoin. But I really think the point of Bitcoin is that you don't need those big systems anymore. They where built to make it easy to buy and sell in a dangerous internet age. Bitcoin will make the process of payments on the internet a simple one on a world scale. And I think this kind of personal sales platform goes along with the idea well. </p>
+<p>Litemarket is a breakdown of the website to it's simplest parts. A database, and a way to view it's contents. When you go to a website they have great graphics and logos, videos everywhere and all kinds of extra stuff. Although that stuff looks great and helps to calm your fears of entering your credit card info. In the world of Bitcoin it's not necessary. I always hear people talking about how they want Amazon or eBay to accept Bitcoin. But I really think the point of Bitcoin is that you don't need those big systems anymore. They where built to make it easy to buy and sell in a dangerous internet age. Bitcoin will make the process of payments on the internet a simple one, on a global scale. And I think this kind of personal sales platform goes along with the idea well. </p>
 
 <p>Donate: 18WcknETBsjEB5JfdXipyExrjKkjP8N6XG</p>
 <br>
@@ -18,8 +18,8 @@ And change the torrc file to these settings.
 
 HiddenServiceDir C:\Users\...YOUR DOCUMENTS!...\Documents\tor\hidden_service<br>
 HiddenServicePort 80 127.0.0.1:55555
-<br>
-If your internet connection is slow you maybe run into trouble loading the TOR files. If LiteMarket cannot connect to TOR, try searching for "Orchid" in windows and then deleting the files in that folder. Restart LiteMarket.
+<br><br>
+If your internet connection is slow you may run into trouble loading the TOR files. If LiteMarket cannot connect to TOR, try searching for "Orchid" in windows and then deleting the files in that folder. Restart LiteMarket.
 <br>
 
 <p>JRE Notes.</p>
