@@ -9,8 +9,6 @@
 
 <p>Litemarket is a breakdown of the website to it's simplest parts. A database, and a way to view it's contents. When you go to a website they have great graphics and logos, videos everywhere and all kinds of extra stuff. Although that stuff looks great and helps to calm your fears of entering your credit card info. In the world of Bitcoin it's not necessary. I always hear people talking about how they want Amazon or eBay to accept Bitcoin. But I really think the point of Bitcoin is that you don't need those big systems anymore. They where built to make it easy to buy and sell in a dangerous internet age. Bitcoin will make the process of payments on the internet a simple one on a world scale. And I think this kind of personal sales platform goes along with the idea well. </p>
 
-<p>When I first learned to make websites I remember thinking how easy it was. How I had looked at these sites for so long, amazed at the skill. And then after taking a 1 hour html online class realized I could do the same. Then later, it all came crashing down when I learned that if you want your website to accept payments...... you needed to be smart. Money on the internet is difficult, it wasn't made with that in mind. Bitcoin was built just for that need. And I think the old website model will change as well, as we learn we no longer need these complicated checkout carts. </p>
-
 <p>Donate: 18WcknETBsjEB5JfdXipyExrjKkjP8N6XG</p>
 <br>
 
@@ -20,6 +18,8 @@ And change the torrc file to these settings.
 
 HiddenServiceDir C:\Users\...YOUR DOCUMENTS!...\Documents\tor\hidden_service<br>
 HiddenServicePort 80 127.0.0.1:55555
+<br>
+If your internet connection is slow you maybe run into trouble loading the TOR files. If LiteMarket cannot connect to TOR, try searching for "Orchid" in windows and then deleting the files in that folder. Restart LiteMarket.
 <br>
 
 <p>JRE Notes.</p>
