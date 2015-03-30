@@ -223,8 +223,8 @@ static int getting_items = 0;
 static int connection_active = 0;
 static int rpc_connection_active = 0;
 static int server_requests = 0;
-static int gateway_port = 9291;
-static int api_port = 9292;
+static int gateway_port = 55551;
+static int api_port = 55552;
 static int server_port = 55555;//9293
 static int client_port = 80;//9293
 static int rpc_wallet_port = 8332;  //AUR 12341
@@ -507,7 +507,7 @@ JButton searchb = new JButton("Search");
 JLabel infoxs1 = new JLabel("Loading...", JLabel.LEFT);
 JLabel infoxs2 = new JLabel("Loading...", JLabel.LEFT);
 JLabel infoxs3 = new JLabel("Loading...", JLabel.LEFT);
-JLabel infoxs4 = new JLabel("LiteMarket Port:80   API Port:9292   Krypton Port:9295   Program Version:" + program_version + "   Database Version:10.5.3.0", JLabel.LEFT);
+JLabel infoxs4 = new JLabel("LiteMarket Port:80   API Port:55552   Krypton Port:9295   Program Version:" + program_version + "   Database Version:10.5.3.0", JLabel.LEFT);
 
 
 Label infox1 = new Label("start", Label.LEFT);
@@ -3684,27 +3684,24 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 	int item_request = 1;
 
 
-	while(getting_items == 1 && carbon_buy[0].length > 1){//**
 
 
 	infox1.setText("loading database items from server " + carbon_buy[item_id_xx][item_request]);
 
-	net_client_inventory_item nclient = new net_client_inventory_item(carbon_buy[item_id_xx][item_request]);
+	net_client_inventory_array nclient = new net_client_inventory_array(carbon_buy[item_id_xx][item_request]);
 
 	display_item();
 
 	//try{Thread.sleep(200);} catch(InterruptedException e){}
 
-	
 	item_request++;
 
-	if(item_request < carbon_buy[0].length){}
-	else{getting_items = 0; System.out.println("DONE"); break;}
+
+	getting_items = 0;
+	System.out.println("DONE");
 
 
 
-
-	}//while**************************************************
 
 	infoxs1.setText("Item list loaded");
 	buy_button_click();
