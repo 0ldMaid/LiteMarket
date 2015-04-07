@@ -84,7 +84,7 @@ try{
 
 JSONObject obj = new JSONObject();
 
-obj.put(lm.program_id, "bid");
+obj.put(lm.program_version, "bid");
 obj.put("password", lm.passx);
 obj.put("item_id",               lm.carbon_buy[lm.item_id_xx][lm.what_item]);
 obj.put("bid",                   lm.send_bid_amount);

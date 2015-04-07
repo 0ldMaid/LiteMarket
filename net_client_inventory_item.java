@@ -77,7 +77,7 @@ String jsonText = new String("");
 try{
 
 JSONObject obj = new JSONObject();
-obj.put(lm.program_id, "get_item_info");
+obj.put(lm.program_version, "get_item_info");
 obj.put("password", lm.passx);
 obj.put("item_idx", item_id_xx);
 

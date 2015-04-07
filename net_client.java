@@ -24,6 +24,13 @@ import javax.imageio.ImageIO;
 import javax.imageio.*;
 import java.awt.image.*;
 
+import com.subgraph.orchid.circuits.hs.HSDescriptorCookie;
+import com.subgraph.orchid.config.TorConfigBridgeLine;
+import com.subgraph.orchid.data.HexDigest;
+import com.subgraph.orchid.data.IPv4Address;
+import com.subgraph.orchid.encoders.Hex;
+import com.subgraph.orchid.*;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
@@ -51,9 +58,9 @@ Toolkit toolkit;
 net_client(){//*****************************************************************
 
 
-
-request_status();
-
+	try{
+	   initTor();
+	}catch(Exception e){e.printStackTrace();}
 
 
 }//*****************************************************************************
@@ -79,7 +86,7 @@ String jsonText = new String("");
 try{//***********************************************
 
 	JSONObject obj = new JSONObject();
-	obj.put(lm.program_id, "connect");
+	obj.put(lm.program_version, "connect");
 	obj.put("password", lm.passx);
 
 	StringWriter out = new StringWriter();
@@ -190,7 +197,33 @@ System.out.println("go");
 
 
 
+	public void initTor() throws Exception {
 
+        // Oracle actually got permission to enable AES256 everywhere years ago anyway, they just didn't get around to
+        // actually doing so yet!
+        lm.tor = new TorClient();
+        lm.tor.addInitializationListener(new TorInitializationListener() {
+            @Override
+            public void initializationProgress(String message, int percent) {
+
+                System.out.println(">>> [ " + percent + "% ]: " + message);
+		//infox1.setText("LOAD TOR >>> [ " + percent + "% ]: " + message);
+
+            }//**************************************************************
+
+            @Override
+            public void initializationCompleted() {
+
+                System.out.println("Tor is ready to go!");
+		//infox6.setIcon(imx4);
+		request_status();
+
+            }//************************************
+        });
+
+        lm.tor.start();
+
+    	}//****************************************
 
 
 

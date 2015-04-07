@@ -84,7 +84,7 @@ try{
 
 JSONObject obj = new JSONObject();
 
-obj.put(lm.program_id, "search");
+obj.put(lm.program_version, "search");
 obj.put("password", lm.passx);
 obj.put("search_text", lm.search_text);
 obj.put("search_field", lm.search_field);

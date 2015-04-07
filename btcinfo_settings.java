@@ -52,7 +52,6 @@ JTextField add_state = new JTextField("", 15);
 JTextField add_zip = new JTextField("", 15);
 JTextField add_country = new JTextField("", 15);
 
-
 JLabel header1_l = new JLabel("btc_url", JLabel.RIGHT);
 JLabel header2_l = new JLabel("btc_address", JLabel.RIGHT);
 JLabel header3_l = new JLabel("btc_user", JLabel.RIGHT);
@@ -61,8 +60,7 @@ JLabel header4_l = new JLabel("btc_password", JLabel.RIGHT);
 JTextField btc_url = new JTextField("URL", 15);
 JTextField btc_address = new JTextField("Address", 15);
 JTextField btc_user = new JTextField("User", 15);
-JTextField btc_password = new JTextField("Password", 15);
-
+JPasswordField btc_password = new JPasswordField("", 15);
 
 JLabel header1_lxx = new JLabel("e-mail", JLabel.RIGHT);
 JLabel header2_lxx = new JLabel("e-mail", JLabel.RIGHT);
@@ -160,7 +158,7 @@ btcinfo_settings(){//****************************
 	btc_address.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 	btc_user.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 	btc_password.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-
+	//btc_password.setActionCommand(OK);
 
 
 	header1_lxx.setPreferredSize(new Dimension(90, 20));

@@ -86,7 +86,7 @@ try{
 
 
 	JSONObject obj = new JSONObject();
-	obj.put(lm.program_id, "get_item_info_array");
+	obj.put(lm.program_version, "get_item_info_array");
 	obj.put("password", lm.passx);
 	obj.put("item_array", mapx);
 

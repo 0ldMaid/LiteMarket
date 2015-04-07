@@ -61,9 +61,6 @@ import com.subgraph.orchid.data.IPv4Address;
 import com.subgraph.orchid.encoders.Hex;
 import com.subgraph.orchid.*;
 
-
-
-
 import java.net.HttpURLConnection;
 import javax.net.SocketFactory;
 
@@ -1128,7 +1125,7 @@ lm(){//*************************************************************************
 
 
 
-	urlc1.setToolTipText("Store IP Example: xxx.xxx.xxx.xxx");
+	urlc1.setToolTipText("<html>Store IP Example: xxx.xxx.xxx.xxx<br>      OR: xxxxxxxxxxxx.onion<html>");
 	urlc1.setBorder(BorderFactory.createLineBorder(whitex));
 
 	urlp1.setToolTipText("Store Password");
@@ -3553,6 +3550,17 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 	inventory.setText("Orders (" + carbon_sold[0].length + ")");
 	purchased.setText("Purchased (" + carbon_purchase[0].length + ")");
 
+	if(connection_active == 1){
+	searchb.setEnabled(true);
+	searchx.setEnabled(true);
+	searchf.setEnabled(true);
+	}//************************
+	else{
+	searchb.setEnabled(false);
+	searchx.setEnabled(false);
+	searchf.setEnabled(false);
+	}//************************
+
 
 	//infox1.setText("system loop 2");
 
@@ -5825,11 +5833,6 @@ public void actionPerformed(ActionEvent event){
         });
 
         tor.start();
-
-
-
-
-
 
     	}//****************************************
 

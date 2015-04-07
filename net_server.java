@@ -210,12 +210,12 @@ try{//*********************************************************
 
 		jsonText = "";
 
-		if(!clientSentence.contains(lm.program_id)){throw new EmptyStackException();}
+		if(!clientSentence.contains(lm.program_version)){throw new EmptyStackException();}
 		Object obj = parser.parse(clientSentence);
  
 		jsonObject = (JSONObject) obj;
   
-		String request = (String) jsonObject.get(lm.program_id);
+		String request = (String) jsonObject.get(lm.program_version);
 		String password2 = (String) jsonObject.get("password");
 		passwordx = password2;
 		System.out.println(request);
@@ -502,10 +502,10 @@ try{//*********************************************************
 
 			responsex = "1"; 
 			System.out.println("item info array");
+			int total_to_send = 0;
 
 
-
-			try{
+			try{//*****************************************************************************************************************************
 
 
 			   Map<String, String> mapxl = new HashMap<String, String>();
@@ -524,7 +524,7 @@ try{//*********************************************************
 
 
 
-			try{
+			try{//*******************************************************************************************************************
 
 			while(true){
 
@@ -539,89 +539,96 @@ try{//*********************************************************
 			   System.out.println("MATCH ID " + item_idx);
 
 
-			for(int xloop = 1; xloop < (itemxd + 1); xloop++){//****************************************************
+			for(int xloop = 1; xloop < lm.carbon_sell[0].length; xloop++){//****************************************************
 			
+					System.out.println("" + lm.carbon_sell[lm.item_id_xx][xloop] + " " + item_idx);
 
 				if(lm.carbon_sell[lm.item_id_xx][xloop].equals(item_idx)){
- 
-				System.out.println("exporting " + lm.carbon_sell[lm.item_id_xx][xloop]);
-
-				Map<String, String> mapx = new HashMap<String, String>();
-
-				mapx.put("[[currency]]",               lm.carbon_sell[lm.currency_xx][xloop]);
-				mapx.put("[[custom_template]]",        lm.carbon_sell[lm.custom_template_xx][xloop]);
-				mapx.put("[[custom_1]]",               lm.carbon_sell[lm.custom_1_xx][xloop]);
-				mapx.put("[[custom_2]]",               lm.carbon_sell[lm.custom_2_xx][xloop]);
-				mapx.put("[[custom_3]]",               lm.carbon_sell[lm.custom_3_xx][xloop]);
-				mapx.put("[[item_errors]]",            lm.carbon_sell[lm.item_errors_xx][xloop]);
-				mapx.put("[[item_date_listed]]",       lm.carbon_sell[lm.item_date_listed_xx][xloop]);
-				mapx.put("[[item_date_listed_day]]",   lm.carbon_sell[lm.item_date_listed_day_xx][xloop]);
-				mapx.put("[[item_date_listed_int]]",   lm.carbon_sell[lm.item_date_listed_int_xx][xloop]);
-				mapx.put("[[item_hits]]",              lm.carbon_sell[lm.item_hits_xx][xloop]);
-				mapx.put("[[item_confirm_code]]",      lm.carbon_sell[lm.item_confirm_code_xx][xloop]);
-				mapx.put("[[item_confirmed]]",         lm.carbon_sell[lm.item_confirmed_xx][xloop]);
-				mapx.put("[[item_cost]]",              lm.carbon_sell[lm.item_cost_xx][xloop]);
-				mapx.put("[[item_description]]",       lm.carbon_sell[lm.item_description_xx][xloop]);
-				mapx.put("[[item_id]]",                lm.carbon_sell[lm.item_id_xx][xloop]);
-				mapx.put("[[item_price]]",             lm.carbon_sell[lm.item_price_xx][xloop]);
-				mapx.put("[[item_weight]]",            lm.carbon_sell[lm.item_weight_xx][xloop]);
-				mapx.put("[[item_listing_id]]",        lm.carbon_sell[lm.item_listing_id_xx][xloop]);
-				mapx.put("[[item_notes]]",             lm.carbon_sell[lm.item_notes_xx][xloop]);
-				mapx.put("[[item_package_d]]",         lm.carbon_sell[lm.item_package_d_xx][xloop]);
-				mapx.put("[[item_package_l]]",         lm.carbon_sell[lm.item_package_l_xx][xloop]);
-				mapx.put("[[item_package_w]]",         lm.carbon_sell[lm.item_package_w_xx][xloop]);
-				mapx.put("[[item_part_number]]",       lm.carbon_sell[lm.item_part_number_xx][xloop]);
-				mapx.put("[[item_title]]",             lm.carbon_sell[lm.item_title_xx][xloop]);
-				mapx.put("[[item_title_url]]",         lm.carbon_sell[lm.item_title_url_xx][xloop]);
-				mapx.put("[[item_type]]",              lm.carbon_sell[lm.item_type_xx][xloop]);
-				mapx.put("[[item_search_1]]",          lm.carbon_sell[lm.item_search_1_xx][xloop]);
-				mapx.put("[[item_search_2]]",          lm.carbon_sell[lm.item_search_2_xx][xloop]);
-				mapx.put("[[item_search_3]]",          lm.carbon_sell[lm.item_search_3_xx][xloop]);
-				mapx.put("[[item_site_id]]",           lm.carbon_settings[7]);
-				mapx.put("[[item_site_url]]",          lm.carbon_sell[lm.item_site_url_xx][xloop]);
-				mapx.put("[[item_picture_1]]",         lm.carbon_sell[lm.item_picture_1_xx][xloop]);
-				mapx.put("[[item_total_on_hand]]",     lm.carbon_sell[lm.item_total_on_hand_xx][xloop]);
-				mapx.put("[[seller_address_1]]",       lm.carbon_sell[lm.seller_address_1_xx][xloop]);
-				mapx.put("[[seller_address_2]]",       lm.carbon_sell[lm.seller_address_2_xx][xloop]);
-				mapx.put("[[seller_address_city]]",    lm.carbon_sell[lm.seller_address_city_xx][xloop]);
-				mapx.put("[[seller_address_state]]",   lm.carbon_sell[lm.seller_address_state_xx][xloop]);
-				mapx.put("[[seller_address_zip]]",     lm.carbon_sell[lm.seller_address_zip_xx][xloop]);
-				mapx.put("[[seller_address_country]]", lm.carbon_sell[lm.seller_address_country_xx][xloop]);
-				mapx.put("[[seller_id]]",              lm.carbon_sell[lm.seller_id_xx][xloop]);
-				mapx.put("[[seller_ip]]",              lm.carbon_sell[lm.seller_ip_xx][xloop]);
-				mapx.put("[[seller_email]]",           lm.carbon_sell[lm.seller_email_xx][xloop]);
-				mapx.put("[[seller_first_name]]",      lm.carbon_settings[7]);
-				mapx.put("[[seller_last_name]]",       lm.carbon_settings[7]);
-				mapx.put("[[seller_notes]]",           lm.carbon_sell[lm.seller_notes_xx][xloop]);
-				mapx.put("[[seller_phone]]",           lm.carbon_sell[lm.seller_phone_xx][xloop]);
-				mapx.put("[[seller_logo]]",            lm.carbon_sell[lm.seller_logo_xx][xloop]);
-				mapx.put("[[seller_url]]",             lm.carbon_sell[lm.seller_url_xx][xloop]);
 
 
-				JSONObject sub_objb = new JSONObject();
-				sub_objb = new JSONObject(mapx);
+					total_to_send++; 
 
-				StringWriter outb = new StringWriter();
-				sub_objb.writeJSONString(outb);
-				String jsonTextb = outb.toString();
+					System.out.println("exporting " + lm.carbon_sell[lm.item_id_xx][xloop]);
 
-			   	mapxl.put(Integer.toString(xloop), jsonTextb);
+					Map<String, String> mapx = new HashMap<String, String>();
+
+					mapx.put("[[currency]]",               lm.carbon_sell[lm.currency_xx][xloop]);
+					mapx.put("[[custom_template]]",        lm.carbon_sell[lm.custom_template_xx][xloop]);
+					mapx.put("[[custom_1]]",               lm.carbon_sell[lm.custom_1_xx][xloop]);
+					mapx.put("[[custom_2]]",               lm.carbon_sell[lm.custom_2_xx][xloop]);
+					mapx.put("[[custom_3]]",               lm.carbon_sell[lm.custom_3_xx][xloop]);
+					mapx.put("[[item_errors]]",            lm.carbon_sell[lm.item_errors_xx][xloop]);
+					mapx.put("[[item_date_listed]]",       lm.carbon_sell[lm.item_date_listed_xx][xloop]);
+					mapx.put("[[item_date_listed_day]]",   lm.carbon_sell[lm.item_date_listed_day_xx][xloop]);
+					mapx.put("[[item_date_listed_int]]",   lm.carbon_sell[lm.item_date_listed_int_xx][xloop]);
+					mapx.put("[[item_hits]]",              lm.carbon_sell[lm.item_hits_xx][xloop]);
+					mapx.put("[[item_confirm_code]]",      lm.carbon_sell[lm.item_confirm_code_xx][xloop]);
+					mapx.put("[[item_confirmed]]",         lm.carbon_sell[lm.item_confirmed_xx][xloop]);
+					mapx.put("[[item_cost]]",              lm.carbon_sell[lm.item_cost_xx][xloop]);
+					mapx.put("[[item_description]]",       lm.carbon_sell[lm.item_description_xx][xloop]);
+					mapx.put("[[item_id]]",                lm.carbon_sell[lm.item_id_xx][xloop]);
+					mapx.put("[[item_price]]",             lm.carbon_sell[lm.item_price_xx][xloop]);
+					mapx.put("[[item_weight]]",            lm.carbon_sell[lm.item_weight_xx][xloop]);
+					mapx.put("[[item_listing_id]]",        lm.carbon_sell[lm.item_listing_id_xx][xloop]);
+					mapx.put("[[item_notes]]",             lm.carbon_sell[lm.item_notes_xx][xloop]);
+					mapx.put("[[item_package_d]]",         lm.carbon_sell[lm.item_package_d_xx][xloop]);
+					mapx.put("[[item_package_l]]",         lm.carbon_sell[lm.item_package_l_xx][xloop]);
+					mapx.put("[[item_package_w]]",         lm.carbon_sell[lm.item_package_w_xx][xloop]);
+					mapx.put("[[item_part_number]]",       lm.carbon_sell[lm.item_part_number_xx][xloop]);
+					mapx.put("[[item_title]]",             lm.carbon_sell[lm.item_title_xx][xloop]);
+					mapx.put("[[item_title_url]]",         lm.carbon_sell[lm.item_title_url_xx][xloop]);
+					mapx.put("[[item_type]]",              lm.carbon_sell[lm.item_type_xx][xloop]);
+					mapx.put("[[item_search_1]]",          lm.carbon_sell[lm.item_search_1_xx][xloop]);
+					mapx.put("[[item_search_2]]",          lm.carbon_sell[lm.item_search_2_xx][xloop]);
+					mapx.put("[[item_search_3]]",          lm.carbon_sell[lm.item_search_3_xx][xloop]);
+					mapx.put("[[item_site_id]]",           lm.carbon_settings[7]);
+					mapx.put("[[item_site_url]]",          lm.carbon_sell[lm.item_site_url_xx][xloop]);
+					mapx.put("[[item_picture_1]]",         lm.carbon_sell[lm.item_picture_1_xx][xloop]);
+					mapx.put("[[item_total_on_hand]]",     lm.carbon_sell[lm.item_total_on_hand_xx][xloop]);
+					mapx.put("[[seller_address_1]]",       lm.carbon_sell[lm.seller_address_1_xx][xloop]);
+					mapx.put("[[seller_address_2]]",       lm.carbon_sell[lm.seller_address_2_xx][xloop]);
+					mapx.put("[[seller_address_city]]",    lm.carbon_sell[lm.seller_address_city_xx][xloop]);
+					mapx.put("[[seller_address_state]]",   lm.carbon_sell[lm.seller_address_state_xx][xloop]);
+					mapx.put("[[seller_address_zip]]",     lm.carbon_sell[lm.seller_address_zip_xx][xloop]);
+					mapx.put("[[seller_address_country]]", lm.carbon_sell[lm.seller_address_country_xx][xloop]);
+					mapx.put("[[seller_id]]",              lm.carbon_sell[lm.seller_id_xx][xloop]);
+					mapx.put("[[seller_ip]]",              lm.carbon_sell[lm.seller_ip_xx][xloop]);
+					mapx.put("[[seller_email]]",           lm.carbon_sell[lm.seller_email_xx][xloop]);
+					mapx.put("[[seller_first_name]]",      lm.carbon_settings[7]);
+					mapx.put("[[seller_last_name]]",       lm.carbon_settings[7]);
+					mapx.put("[[seller_notes]]",           lm.carbon_sell[lm.seller_notes_xx][xloop]);
+					mapx.put("[[seller_phone]]",           lm.carbon_sell[lm.seller_phone_xx][xloop]);
+					mapx.put("[[seller_logo]]",            lm.carbon_sell[lm.seller_logo_xx][xloop]);
+					mapx.put("[[seller_url]]",             lm.carbon_sell[lm.seller_url_xx][xloop]);
+
+
+					JSONObject sub_objb = new JSONObject();
+					sub_objb = new JSONObject(mapx);
+
+					StringWriter outb = new StringWriter();
+					sub_objb.writeJSONString(outb);
+					String jsonTextb = outb.toString();
+
+			   		mapxl.put(Integer.toString(total_to_send), jsonTextb);
 
 
 				}//*******************************************************
+				//else{System.out.println("MATCH error! 67");}
 
 
-
-			}//*****************************************************************************************************
+			}//for**************************************************************************************************************
 
 
 			itemxd++;
 
 			}//while****
 
-			}catch(Exception e){e.printStackTrace();}
+			}catch(Exception e){e.printStackTrace();}//******************************************************************************
 
 
+			System.out.println("total_to_send " + total_to_send);
+
+				if(total_to_send < 1){SYSTEM_ERROR_MESSAGE = "Error 802"; responsex = "0";}
 
 			JSONObject sub_obj = new JSONObject();
 			sub_obj = new JSONObject(mapxl);
