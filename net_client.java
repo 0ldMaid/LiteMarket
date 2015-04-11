@@ -119,6 +119,7 @@ System.out.println("go");
    		Socket socket = factory.createSocket(lm.httpx, 80);
 		//socket.setSoTimeout(20000);
 
+		lm.infox1.setText("Socket G");
 		System.out.println("socketg");
 
     		OutputStream outputStream = socket.getOutputStream();
@@ -152,7 +153,16 @@ System.out.println("go");
 
 
 
-    if(modifiedSentence.contains("Offline 400")){JOptionPane.showMessageDialog(null, "SERVER IS OFFLINE");}
+    if(modifiedSentence.contains("Offline 400")){
+	JOptionPane.showMessageDialog(null, "SERVER IS OFFLINE");
+
+		   lm.url_connect.setEnabled(true);
+		   lm.searchb.setEnabled(false);
+		   lm.searchx.setEnabled(false);
+		   lm.searchf.setEnabled(false);
+
+
+    }//******************************************
     else{
 
 
@@ -174,12 +184,43 @@ System.out.println("go");
 		System.out.println(inventory);
 		System.out.println(idx);
 
-		if(request.equals("1")){lm.connection_active = 1; JOptionPane.showMessageDialog(null, "Connected To:\n" + idx + "\nInventory (" + inventory + " items)");}
-		else{lm.connection_active = 0; JOptionPane.showMessageDialog(null, "Server ID mismatch");}
+		if(request.equals("1")){
+
+		lm.connection_active = 1; 
+		JOptionPane.showMessageDialog(null, "Connected To:\n" + idx + "\nInventory (" + inventory + " items)");
+
+		   lm.url_connect.setEnabled(true);
+		   lm.searchb.setEnabled(true);
+		   lm.searchx.setEnabled(true);
+		   lm.searchf.setEnabled(true);
+
+		}//*********************
+		else{
+
+		   lm.connection_active = 0; 
+		   JOptionPane.showMessageDialog(null, "Server ID mismatch");
+
+		   lm.url_connect.setEnabled(true);
+		   lm.searchb.setEnabled(false);
+		   lm.searchx.setEnabled(false);
+		   lm.searchf.setEnabled(false);
+
+		}//**
 
 
 	}//try
-	catch (ParseException e){e.printStackTrace(); lm.connection_active = 0; JOptionPane.showMessageDialog(null, "Connection failure!");}
+	catch (ParseException e){
+
+	   e.printStackTrace(); 
+	   lm.connection_active = 0; 
+	   JOptionPane.showMessageDialog(null, "Connection failure!");
+
+	   lm.url_connect.setEnabled(true);
+	   lm.searchb.setEnabled(false);
+	   lm.searchx.setEnabled(false);
+	   lm.searchf.setEnabled(false);
+
+	}//**********************
 
 
 
@@ -187,7 +228,19 @@ System.out.println("go");
 
 
 
-}catch(Exception e){e.printStackTrace(); lm.connection_active = 0; JOptionPane.showMessageDialog(null, "Cannot find a host!"); lm.error_codes_client = e.getMessage();}
+}catch(Exception e){
+
+	e.printStackTrace(); 
+	lm.connection_active = 0; 
+	JOptionPane.showMessageDialog(null, "Cannot find a host!"); 
+	lm.error_codes_client = e.getMessage();
+
+	lm.url_connect.setEnabled(true);
+	lm.searchb.setEnabled(false);
+	lm.searchx.setEnabled(false);
+	lm.searchf.setEnabled(false);
+
+}//*****************
 
 }//*********************************************************************************************
 
@@ -207,7 +260,7 @@ System.out.println("go");
             public void initializationProgress(String message, int percent) {
 
                 System.out.println(">>> [ " + percent + "% ]: " + message);
-		//infox1.setText("LOAD TOR >>> [ " + percent + "% ]: " + message);
+		lm.infox1.setText("LOAD TOR >>> [ " + percent + "% ]: " + message);
 
             }//**************************************************************
 

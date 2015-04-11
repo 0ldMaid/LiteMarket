@@ -337,6 +337,7 @@ JPanel jpk_menu = new JPanel();
 JPanel jpk_info = new JPanel();
 
 
+
 JScrollPane scrollPane_x = new JScrollPane(jpk_sx);
 
 JPopupMenu menu = new JPopupMenu("Popup");
@@ -478,7 +479,7 @@ static String send_payment_amount = new String("");
 static String send_bid_amount = new String("");
 
 
-//edit
+//edit sell items
 JLabel edit_info = new JLabel("Item (x)", JLabel.LEFT);
 JTextField edit_title = new JTextField("", 30);
 JTextField edit_part = new JTextField("", 20);
@@ -490,12 +491,18 @@ JTextField edit_picture = new JTextField("", 47);
 JTextField edit_id_test = new JTextField("", 1);
 
 
+//buy
+JLabel buy_price = new JLabel("x", JLabel.RIGHT);
+JLabel buy_currency = new JLabel("x", JLabel.LEFT);
+JLabel buy_id = new JLabel("x", JLabel.LEFT);
+JLabel buy_part_number = new JLabel("x", JLabel.LEFT);
+JLabel buy_notes = new JLabel("x", JLabel.LEFT);
+
 
 //search
-
-JTextField searchx = new JTextField("", 15);
-JComboBox<String> searchf = new JComboBox<String>();
-JButton searchb = new JButton("Search");
+static JTextField searchx = new JTextField("", 15);
+static JComboBox<String> searchf = new JComboBox<String>();
+static JButton searchb = new JButton("Search");
 
 
 //search
@@ -507,7 +514,7 @@ JLabel infoxs3 = new JLabel("Loading...", JLabel.LEFT);
 JLabel infoxs4 = new JLabel("LiteMarket Port:80   API Port:55552   Krypton Port:9295   Program Version:" + program_version + "   Database Version:10.5.3.0", JLabel.LEFT);
 
 
-Label infox1 = new Label("start", Label.LEFT);
+static Label infox1 = new Label("start", Label.LEFT);
 JLabel infox2 = new JLabel("Database: Online", JLabel.LEFT);
 JLabel infox3 = new JLabel("Store: Online", JLabel.LEFT);
 JLabel infox4 = new JLabel("Uses(0)", JLabel.LEFT);
@@ -517,14 +524,14 @@ JLabel infox6 = new JLabel("TOR: Online", JLabel.LEFT);
 
 //connect
 
-JLabel url_info1 = new JLabel("LiteMarket Network", JLabel.RIGHT);
+JLabel url_info1 = new JLabel("Krypton Network", JLabel.RIGHT);
 JLabel url_info2 = new JLabel("Connect To Host", JLabel.RIGHT);
 JLabel url_info3 = new JLabel("Password", JLabel.RIGHT);
 JLabel url_info4 = new JLabel("", JLabel.LEFT);
 JTextField urlc1 = new JTextField("", 20);
 JTextField urlp1 = new JTextField("", 20);
 JComboBox<String> urlx1 = new JComboBox<String>();
-JButton url_connect = new JButton("Connect");
+static JButton url_connect = new JButton("Connect");
 
 private static final long serialVersionUID = 1;
 
@@ -918,7 +925,7 @@ lm(){//*************************************************************************
  	url_connect.setBackground(grayx3);
 	//url_connect.setBorder(null);
 	url_connect.setToolTipText("Connect");
-
+	url_connect.setEnabled(false);
 
 
 
@@ -967,8 +974,8 @@ lm(){//*************************************************************************
 	searchf = new JComboBox<String>(database);
 
 	  try{
-	  ix0 = Integer.parseInt(carbon_settings[4]);
-	  searchf.setSelectedIndex(ix0);
+	     ix0 = Integer.parseInt(carbon_settings[4]);
+	     searchf.setSelectedIndex(ix0);
 	  }catch(Exception e){ix0 = 0;}
 
 	searchf.addActionListener(this);
@@ -1135,6 +1142,34 @@ lm(){//*************************************************************************
 	searchx.setBorder(BorderFactory.createLineBorder(whitex));
 
 
+
+
+	buy_price.setPreferredSize(new Dimension(100, 20));
+	buy_price.setToolTipText("Price");
+	buy_price.setOpaque(true);
+ 	buy_price.setForeground(whitex);
+ 	buy_price.setForeground(redx);
+	//buy_price.setBorder(BorderFactory.createLineBorder(blackx));
+
+	buy_currency.setPreferredSize(new Dimension(60, 20));
+	buy_currency.setToolTipText("Currency");
+	buy_currency.setOpaque(true);
+ 	buy_currency.setForeground(whitex);
+ 	buy_currency.setForeground(redx);
+	//buy_currency.setBorder(BorderFactory.createLineBorder(blackx));
+
+	buy_part_number.setPreferredSize(new Dimension(300, 20));
+	buy_part_number.setToolTipText("Part Number");
+	//buy_part_number.setBorder(BorderFactory.createLineBorder(blackx));
+
+	buy_id.setPreferredSize(new Dimension(220, 20));
+	buy_id.setToolTipText("Item ID");
+	//buy_id.setBorder(BorderFactory.createLineBorder(blackx));
+
+	buy_notes.setPreferredSize(new Dimension(663, 20));
+	buy_notes.setToolTipText("Item Notes");
+ 	buy_notes.setForeground(bluex1);
+	//buy_notes.setBorder(BorderFactory.createLineBorder(blackx));
 
 
 
@@ -1611,11 +1646,47 @@ lm(){//*************************************************************************
 
 
 
+	public void jpx_buy(){
+
+	jdx_px1.removeAll();
+
+	flow_edit.setHgap(9);
+	flow_edit.setVgap(5);
+	jdx_px1.setLayout(flow_edit);
+	jdx_px1.setPreferredSize(new Dimension(780, 85));
+	jdx_px1.setBackground(grayx2);//darkgray08
+	jdx_px1.add(edit_info);
+	jdx_px1.add(buy_price);
+	jdx_px1.add(buy_currency);
+	jdx_px1.add(buy_part_number);
+	jdx_px1.add(buy_id);
+	jdx_px1.add(buy_notes);
+
+	}//*******************
 
 
 
+	public void jpx_sell(){
 
+	jdx_px1.removeAll();
 
+	flow_edit.setHgap(9);
+	flow_edit.setVgap(5);
+	jdx_px1.setLayout(flow_edit);
+	jdx_px1.setPreferredSize(new Dimension(780, 85));
+	jdx_px1.setBackground(grayx2);//darkgray08
+	jdx_px1.add(edit_info);
+	jdx_px1.add(xtype);
+	jdx_px1.add(xactive);
+	jdx_px1.add(edit_title);
+	jdx_px1.add(edit_part);
+	jdx_px1.add(edit_cost);
+	jdx_px1.add(edit_price);
+	jdx_px1.add(edit_toh);
+	jdx_px1.add(edit_weight);
+	jdx_px1.add(edit_picture);
+
+	}//********************
 
 
 
@@ -1832,6 +1903,11 @@ else if(db_section == 1){//******************************
 	setTitle("LiteMarket - " + CURRENCY + " Wallet: " + carbon_settings[11]);
 
 	edit_info.setText(carbon_buy[item_title_xx][what_item]);
+	buy_price.setText(carbon_buy[item_price_xx][what_item]);
+	buy_currency.setText(carbon_buy[currency_xx][what_item]);
+	buy_part_number.setText(carbon_buy[item_part_number_xx][what_item]);
+	buy_id.setText("ID: " + carbon_buy[item_id_xx][what_item]);
+	buy_notes.setText(carbon_buy[item_notes_xx][what_item]);
 
 	edit_id_test.setText("xx");
 
@@ -3550,18 +3626,6 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 	inventory.setText("Orders (" + carbon_sold[0].length + ")");
 	purchased.setText("Purchased (" + carbon_purchase[0].length + ")");
 
-	if(connection_active == 1){
-	searchb.setEnabled(true);
-	searchx.setEnabled(true);
-	searchf.setEnabled(true);
-	}//************************
-	else{
-	searchb.setEnabled(false);
-	searchx.setEnabled(false);
-	searchf.setEnabled(false);
-	}//************************
-
-
 	//infox1.setText("system loop 2");
 
 
@@ -4155,6 +4219,8 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 
 
 	public void sell_button_click(){
+	
+	jpx_sell();
 
 	pressx = 0; 
 	pressy = 0; 
@@ -4253,6 +4319,8 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 
 
 	public void buy_button_click(){
+
+	jpx_buy();
 
 	pressx = 0; 
 	pressy = 0; 
@@ -4581,6 +4649,8 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 
 	public void connectedx(){
 
+	url_connect.setEnabled(false);
+
 	getting_items = 0;//turn other worker off
 
 	if(String.valueOf(urlx1.getSelectedItem()).equals("Offline")){httpx = urlc1.getText();}
@@ -4610,6 +4680,7 @@ for(int xloop0 = 0; xloop0 < 10; xloop0++){//***********************************
 	searchx.setEnabled(false);
 	searchf.setEnabled(false);
 	}//************************
+
 
 
 	}//**********************
@@ -5827,10 +5898,15 @@ public void actionPerformed(ActionEvent event){
 
                 System.out.println("Tor is ready to go!");
 		infox6.setIcon(imx4);
-
+		url_connect.setEnabled(true);
 
             }//************************************
         });
+
+	url_connect.setEnabled(false);
+	lm.searchb.setEnabled(false);
+	lm.searchx.setEnabled(false);
+	lm.searchf.setEnabled(false);
 
         tor.start();
 
