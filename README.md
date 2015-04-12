@@ -9,6 +9,8 @@
 
 <p>Litemarket is a breakdown of the website to it's simplest parts. A database, and a way to view it's contents. When you go to a website they have great graphics and logos, videos everywhere and all kinds of extra stuff. Although that stuff looks great and helps to calm your fears of entering your credit card info. In the world of Bitcoin it's not necessary. I always hear people talking about how they want Amazon or eBay to accept Bitcoin. But I really think the point of Bitcoin is that you don't need those big systems anymore. They where built to make it easy to buy and sell in a dangerous internet age. Bitcoin will make the process of payments on the internet a simple one, on a global scale. And I think this kind of personal sales platform goes along with the idea well. </p>
 
+<p>https://sourceforge.net/projects/litemarket/files/latest/download</p>
+
 <p>Donate: 18WcknETBsjEB5JfdXipyExrjKkjP8N6XG</p>
 <br>
 
