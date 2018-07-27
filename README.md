@@ -11,7 +11,7 @@
 
 <p>https://sourceforge.net/projects/litemarket/files/latest/download</p>
 
-<p>Donate: 18WcknETBsjEB5JfdXipyExrjKkjP8N6XG</p>
+<p>Donate: 18NXmEGJBTJ6TyJ5MjA1A847F6Wq6HSR3a</p>
 <br>
 
 <p>TOR torrc file</p>
