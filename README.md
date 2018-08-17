@@ -28,6 +28,7 @@ If your internet connection is slow you may run into trouble loading the TOR fil
 The Java JRE 7 that is packaged with the installer has 2 changes that would need to be added on your system as well if you want to use your own JRE. The Extensions, and the COMODO site certificate for Blockchain.info. At the time of writing the JRE 7 Doesn't have a certificate for Blockchain.info if you try to connect through https you'll get errors. You don't need this if your using the Bitcoin qt as your wallet. 
 
 <br>
+<br>
 RPC commands.
 
     lmx_active              program active or not returns error or 1
